@@ -1,0 +1,32 @@
+{
+  "schemaVersion": 1,
+  "id": "buildcraft",
+  "version": "${version}",
+  "name": "BuildCraft (Fabric)",
+  "description": "Unofficial WIP port scaffold of BuildCraft to Fabric 1.20.4.",
+  "authors": [
+    "BuildCraft Team (original)",
+    "Community (port scaffold)"
+  ],
+  "contact": {
+    "homepage": "https://github.com/BuildCraft/BuildCraft",
+    "sources": "https://github.com/BuildCraft/BuildCraft"
+  },
+  "license": "MPL-2.0",
+  "icon": "assets/buildcraft/icon.png",
+  "environment": "*",
+  "entrypoints": {
+    "main": [
+      "net.mod.buildcraft.fabric.BuildCraftFabricMod"
+    ],
+    "client": [
+      "net.mod.buildcraft.fabric.client.BuildCraftClient"
+    ]
+  },
+  "depends": {
+    "fabricloader": ">=0.15.11",
+    "fabric": "*",
+    "minecraft": "1.20.4"
+  },
+  "accessWidener": "buildcraft.accesswidener"
+}

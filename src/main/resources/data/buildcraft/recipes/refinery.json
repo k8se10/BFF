@@ -1,0 +1,26 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "igi",
+    "rmr",
+    "igi"
+  ],
+  "key": {
+    "i": {
+      "item": "minecraft:iron_ingot"
+    },
+    "g": {
+      "item": "minecraft:glass"
+    },
+    "r": {
+      "item": "minecraft:redstone"
+    },
+    "m": {
+      "item": "minecraft:furnace"
+    }
+  },
+  "result": {
+    "item": "buildcraft:refinery",
+    "count": 1
+  }
+}

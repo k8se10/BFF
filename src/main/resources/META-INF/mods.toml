@@ -1,0 +1,11 @@
+modLoader="javafml"
+loaderVersion="[46,)"
+license="MIT"
+
+[[mods]]
+modId="buildcraft"
+version="1.20.4-rc"
+displayName="BuildCraft (Fabric)"
+description='''Faithful and enhanced Fabric port of BuildCraft, with oil, engines, pipes, quarry, gates, and more.'''
+authors="You + GPT-4o"
+credits="Fabric 1.20.4 port by OfficialK8"

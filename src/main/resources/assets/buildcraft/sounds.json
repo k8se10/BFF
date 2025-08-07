@@ -1,0 +1,51 @@
+{
+  "engine_chug": {
+    "sounds": [
+      {
+        "name": "buildcraft:engine_chug"
+      }
+    ]
+  },
+  "engine_steam_loop": {
+    "sounds": [
+      {
+        "name": "buildcraft:engine_steam_loop"
+      }
+    ]
+  },
+  "engine_combustion_loop": {
+    "sounds": [
+      {
+        "name": "buildcraft:engine_combustion_loop"
+      }
+    ]
+  },
+  "refinery_hum": {
+    "sounds": [
+      {
+        "name": "buildcraft:refinery_hum"
+      }
+    ]
+  },
+  "quarry_loop": {
+    "sounds": [
+      {
+        "name": "buildcraft:quarry_loop"
+      }
+    ]
+  },
+  "laser_zap": {
+    "sounds": [
+      {
+        "name": "buildcraft:laser_zap"
+      }
+    ]
+  },
+  "pump_loop": {
+    "sounds": [
+      {
+        "name": "buildcraft:pump_loop"
+      }
+    ]
+  }
+}

@@ -1,0 +1,23 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "sgs",
+    "gmg",
+    "sgs"
+  ],
+  "key": {
+    "s": {
+      "item": "minecraft:sand"
+    },
+    "g": {
+      "item": "minecraft:glass"
+    },
+    "m": {
+      "item": "minecraft:diamond_shovel"
+    }
+  },
+  "result": {
+    "item": "buildcraft:filler",
+    "count": 1
+  }
+}

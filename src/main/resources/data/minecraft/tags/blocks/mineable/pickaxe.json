@@ -1,0 +1,12 @@
+{
+  "replace": false,
+  "values": [
+    "buildcraft:quarry",
+    "buildcraft:laser",
+    "buildcraft:assembly_table",
+    "buildcraft:filler",
+    "buildcraft:mining_well",
+    "buildcraft:pump",
+    "buildcraft:tank"
+  ]
+}

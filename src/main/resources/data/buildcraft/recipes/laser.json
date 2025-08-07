@@ -1,0 +1,23 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "rgr",
+    "gkg",
+    "rgr"
+  ],
+  "key": {
+    "r": {
+      "item": "minecraft:redstone"
+    },
+    "g": {
+      "item": "minecraft:glass"
+    },
+    "k": {
+      "item": "buildcraft:kinesis_pipe"
+    }
+  },
+  "result": {
+    "item": "buildcraft:laser",
+    "count": 1
+  }
+}

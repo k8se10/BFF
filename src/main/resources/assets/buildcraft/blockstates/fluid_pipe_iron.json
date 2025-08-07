@@ -1,0 +1,60 @@
+{
+  "multipart": [
+    {
+      "apply": {
+        "model": "buildcraft:block/fluid_pipe_iron/core"
+      }
+    },
+    {
+      "when": {
+        "north": true
+      },
+      "apply": {
+        "model": "buildcraft:block/fluid_pipe_iron/arm"
+      }
+    },
+    {
+      "when": {
+        "south": true
+      },
+      "apply": {
+        "model": "buildcraft:block/fluid_pipe_iron/arm",
+        "y": 180
+      }
+    },
+    {
+      "when": {
+        "east": true
+      },
+      "apply": {
+        "model": "buildcraft:block/fluid_pipe_iron/arm",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "west": true
+      },
+      "apply": {
+        "model": "buildcraft:block/fluid_pipe_iron/arm",
+        "y": 270
+      }
+    },
+    {
+      "when": {
+        "up": true
+      },
+      "apply": {
+        "model": "buildcraft:block/fluid_pipe_iron/arm_up"
+      }
+    },
+    {
+      "when": {
+        "down": true
+      },
+      "apply": {
+        "model": "buildcraft:block/fluid_pipe_iron/arm_down"
+      }
+    }
+  ]
+}

@@ -1,0 +1,60 @@
+{
+  "multipart": [
+    {
+      "apply": {
+        "model": "buildcraft:block/kinesis_pipe_diamond/core"
+      }
+    },
+    {
+      "when": {
+        "north": true
+      },
+      "apply": {
+        "model": "buildcraft:block/kinesis_pipe_diamond/arm"
+      }
+    },
+    {
+      "when": {
+        "south": true
+      },
+      "apply": {
+        "model": "buildcraft:block/kinesis_pipe_diamond/arm",
+        "y": 180
+      }
+    },
+    {
+      "when": {
+        "east": true
+      },
+      "apply": {
+        "model": "buildcraft:block/kinesis_pipe_diamond/arm",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "west": true
+      },
+      "apply": {
+        "model": "buildcraft:block/kinesis_pipe_diamond/arm",
+        "y": 270
+      }
+    },
+    {
+      "when": {
+        "up": true
+      },
+      "apply": {
+        "model": "buildcraft:block/kinesis_pipe_diamond/arm_up"
+      }
+    },
+    {
+      "when": {
+        "down": true
+      },
+      "apply": {
+        "model": "buildcraft:block/kinesis_pipe_diamond/arm_down"
+      }
+    }
+  ]
+}

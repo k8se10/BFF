@@ -1,0 +1,14 @@
+{
+  "kinesis_line_loss": 0.01,
+  "quarry_cost_mj": 0.2,
+  "oil_rarity_desert": 1.5,
+  "oil_rarity_forest": 0.5,
+  "oil_biome_multipliers": {
+    "minecraft:desert": 1.6,
+    "minecraft:badlands": 1.4,
+    "minecraft:savanna": 1.2,
+    "minecraft:plains": 1.0,
+    "minecraft:swamp": 0.8,
+    "minecraft:forest": 0.5
+  }
+}
