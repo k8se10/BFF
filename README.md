@@ -25,3 +25,24 @@ An advanced, modernized port of BuildCraft for Fabric, fully faithful to the ori
 Run `python tools/generate_placeholder_sounds.py --ogg` to synthesize and convert placeholder sounds.
 
 **Fabric 1.20.4 port by OfficialK8**
+
+
+## Building locally
+
+Requirements:
+- **Java 17**
+- **Gradle** (or use the Gradle wrapper)
+
+Commands:
+```bash
+# Optional: generate placeholder audio
+python tools/generate_placeholder_sounds.py --ogg
+
+# Build
+./gradlew build
+
+# Output JAR is in:
+build/libs/
+```
+
+[![Build](https://github.com/k8se10/BFF/actions/workflows/build.yml/badge.svg)](https://github.com/k8se10/BFF/actions/workflows/build.yml)
