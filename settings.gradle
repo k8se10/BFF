@@ -1,8 +1,18 @@
 pluginManagement {
-  repositories {
-    maven { url = 'https://maven.fabricmc.net/' }
-    gradlePluginPortal()
-    mavenCentral()
-  }
+    repositories {
+        // Fabric's Maven must be first so Loom resolves correctly
+        maven { url = 'https://maven.fabricmc.net/' }
+        gradlePluginPortal()
+        mavenCentral()
+    }
+    // Optional: ensure Loom resolves from Fabric Maven explicitly
+    resolutionStrategy {
+        eachPlugin {
+            if (requested.id.id == "fabric-loom") {
+                useModule("net.fabricmc:fabric-loom:${requested.version}")
+            }
+        }
+    }
 }
+
 rootProject.name = "buildcraft-fabric"
