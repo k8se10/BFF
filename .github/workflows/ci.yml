@@ -18,7 +18,7 @@ jobs:
           distribution: temurin
           java-version: '17'
 
-      # Normalize CRLF to LF to avoid "-Xmx64m" class errors
+      # Normalize CRLF -> LF to avoid "-Xmx64m" class errors from broken wrapper quoting
       - name: Normalize Gradle wrapper line endings
         run: |
           sudo apt-get update
@@ -26,25 +26,24 @@ jobs:
           if [ -f gradlew ]; then dos2unix gradlew; fi
           if [ -f gradle/wrapper/gradle-wrapper.properties ]; then dos2unix gradle/wrapper/gradle-wrapper.properties; fi
 
-      # Ensure gradlew is executable (no-op if it already is)
+      # Ensure wrapper is executable
       - name: Make Gradle wrapper executable
         run: |
           if [ -f gradlew ]; then chmod +x gradlew; fi
 
-      # Try the wrapper; if it fails, install Gradle and generate a new wrapper (fallback)
-      - name: Gradle version (with fallback)
+      # Try wrapper; if it fails or missing, install Gradle via SDKMAN and generate wrapper
+      - name: Gradle wrapper sanity (with fallback)
         shell: bash
         run: |
           set -e
           if [ -f gradlew ]; then
             if ./gradlew --version; then
-              echo "Gradle wrapper OK"
+              echo "Gradle wrapper OK."
             else
               echo "Wrapper failed; installing Gradle via SDKMAN and generating wrapper..."
               curl -s "https://get.sdkman.io" | bash
               source "$HOME/.sdkman/bin/sdkman-init.sh"
               sdk install gradle 8.7
-              gradle --version
               gradle wrapper --gradle-version 8.7
               chmod +x gradlew
               ./gradlew --version
@@ -59,19 +58,48 @@ jobs:
             ./gradlew --version
           fi
 
-      # Optional: generate placeholder audio (safe to skip if ffmpeg missing)
+      # Optional: synthesize placeholder audio (safe to skip if ffmpeg missing)
       - name: Generate placeholder audio
         run: |
           python3 tools/generate_placeholder_sounds.py --ogg || true
 
-      # Gradle cache (speeds up builds)
+      # Cache Gradle to speed up future runs
       - name: Setup Gradle cache
         uses: gradle/actions/setup-gradle@v3
 
-      - name: Build with Gradle
-        run: ./gradlew build --stacktrace --no-daemon
+      # Compile only, capture ALL javac errors into an artifact
+      - name: Compile (capture log)
+        id: compile
+        shell: bash
+        run: |
+          set -o pipefail
+          ./gradlew :compileJava --stacktrace --warning-mode all -Dorg.gradle.console=plain | tee compile-output.txt
+          echo "exit_code=${PIPESTATUS[0]}" >> $GITHUB_OUTPUT
+
+      - name: Upload compile log
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: compile-output
+          path: compile-output.txt
+
+      # Only build the jar if compile succeeded
+      - name: Build (full)
+        if: steps.compile.outputs.exit_code == '0'
+        shell: bash
+        run: |
+          set -o pipefail
+          ./gradlew build --stacktrace --warning-mode all -Dorg.gradle.console=plain | tee build-output.txt
+
+      - name: Upload build log
+        if: always() && steps.compile.outputs.exit_code == '0'
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-output
+          path: build-output.txt
 
       - name: Upload artifacts
+        if: steps.compile.outputs.exit_code == '0'
         uses: actions/upload-artifact@v4
         with:
           name: buildcraft-fabric-1.20.4-jar
