@@ -18,17 +18,48 @@ jobs:
           distribution: temurin
           java-version: '17'
 
-      # Fix Windows line endings breaking the Gradle wrapper on Linux
-      - name: Normalize line endings for Gradle wrapper
+      # Normalize CRLF to LF to avoid "-Xmx64m" class errors
+      - name: Normalize Gradle wrapper line endings
         run: |
-          sed -i 's/\r$//' gradlew
-          sed -i 's/\r$//' gradle/wrapper/gradle-wrapper.properties
+          sudo apt-get update
+          sudo apt-get install -y dos2unix
+          if [ -f gradlew ]; then dos2unix gradlew; fi
+          if [ -f gradle/wrapper/gradle-wrapper.properties ]; then dos2unix gradle/wrapper/gradle-wrapper.properties; fi
 
-      # Ensure the wrapper is executable
+      # Ensure gradlew is executable (no-op if it already is)
       - name: Make Gradle wrapper executable
-        run: chmod +x gradlew
+        run: |
+          if [ -f gradlew ]; then chmod +x gradlew; fi
 
-      # (Optional) Generate placeholder audio (safe to skip if ffmpeg missing)
+      # Try the wrapper; if it fails, install Gradle and generate a new wrapper (fallback)
+      - name: Gradle version (with fallback)
+        shell: bash
+        run: |
+          set -e
+          if [ -f gradlew ]; then
+            if ./gradlew --version; then
+              echo "Gradle wrapper OK"
+            else
+              echo "Wrapper failed; installing Gradle via SDKMAN and generating wrapper..."
+              curl -s "https://get.sdkman.io" | bash
+              source "$HOME/.sdkman/bin/sdkman-init.sh"
+              sdk install gradle 8.7
+              gradle --version
+              gradle wrapper --gradle-version 8.7
+              chmod +x gradlew
+              ./gradlew --version
+            fi
+          else
+            echo "No gradlew found; installing Gradle via SDKMAN and generating wrapper..."
+            curl -s "https://get.sdkman.io" | bash
+            source "$HOME/.sdkman/bin/sdkman-init.sh"
+            sdk install gradle 8.7
+            gradle wrapper --gradle-version 8.7
+            chmod +x gradlew
+            ./gradlew --version
+          fi
+
+      # Optional: generate placeholder audio (safe to skip if ffmpeg missing)
       - name: Generate placeholder audio
         run: |
           python3 tools/generate_placeholder_sounds.py --ogg || true
@@ -36,9 +67,6 @@ jobs:
       # Gradle cache (speeds up builds)
       - name: Setup Gradle cache
         uses: gradle/actions/setup-gradle@v3
-
-      - name: Gradle version
-        run: ./gradlew --version
 
       - name: Build with Gradle
         run: ./gradlew build --stacktrace --no-daemon
