@@ -3,9 +3,20 @@ plugins {
     id 'maven-publish'
 }
 
-archivesBaseName = 'buildcraft-fabric'
+base {
+    // replaces the old: archivesBaseName = 'buildcraft-fabric'
+    archivesName = 'buildcraft-fabric'
+}
+
 version = '1.20.4-rc'
 group = 'net.mod.buildcraft'
+
+java {
+    toolchain { languageVersion = JavaLanguageVersion.of(17) }
+    sourceCompatibility = JavaVersion.VERSION_17
+    targetCompatibility = JavaVersion.VERSION_17
+    withSourcesJar()
+}
 
 repositories {
     mavenCentral()
@@ -13,14 +24,38 @@ repositories {
 }
 
 dependencies {
-    minecraft 'com.mojang:minecraft:1.20.4'
+    minecraft "com.mojang:minecraft:1.20.4"
     mappings loom.officialMojangMappings()
     modImplementation "net.fabricmc:fabric-loader:0.15.6"
     modImplementation "net.fabricmc.fabric-api:fabric-api:0.95.1+1.20.4"
 }
 
 loom {
+    // If you use an access widener, keep this:
     accessWidenerPath = file("src/main/resources/buildcraft.accesswidener")
-    // No legacy mixin remap type here!
-    // mixin { defaultRefmapName = "buildcraft.refmap.json" } // optional
+
+    // Use this if you keep a refmap; DO NOT set any legacy “remap type” here
+    // mixin {
+    //     defaultRefmapName = "buildcraft.refmap.json"
+    // }
+}
+
+// Optional: tidy jar manifest
+tasks.withType(Jar).configureEach {
+    from("LICENSE") { rename { "${it}_${project.base.archivesName.get()}" } }
+}
+
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            from components.java
+            groupId = project.group
+            artifactId = project.base.archivesName.get()
+            version = project.version
+        }
+    }
+    repositories {
+        // add your maven target here if you publish
+        // mavenLocal()
+    }
 }
