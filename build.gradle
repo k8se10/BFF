@@ -8,8 +8,13 @@ base {
     archivesName = 'buildcraft-fabric'
 }
 
-version = '1.20.4-rc'
-group = 'net.mod.buildcraft'
+group = "net.mod.buildcraft"
+version = "0.1.0+1.20.4"
+archivesBaseName = "buildcraft-fabric"
+
+tasks.named("build") {
+    dependsOn("remapJar") // make sure release jar is produced on build
+}
 
 java {
     toolchain { languageVersion = JavaLanguageVersion.of(17) }
