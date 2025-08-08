@@ -17,8 +17,8 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-#      - name: Validate Gradle Wrapper
-#        uses: gradle/wrapper-validation-action@v2
+      - name: Validate Gradle Wrapper
+        uses: gradle/wrapper-validation-action@v2
 
       - name: Set up JDK 17 (Temurin)
         uses: actions/setup-java@v4
@@ -47,7 +47,14 @@ jobs:
       - name: Clear DEFAULT_JVM_OPTS in wrapper
         shell: bash
         run: |
-          python3 -c "import re, pathlib; p=pathlib.Path('gradlew'); s=p.read_text(encoding='utf-8'); s=re.sub(r'^DEFAULT_JVM_OPTS=.*$', 'DEFAULT_JVM_OPTS=\"\"', s, flags=re.M); p.write_text(s, encoding='utf-8')"
+          python3 - << 'PY'
+import re, pathlib
+p=pathlib.Path('gradlew')
+if p.exists():
+    s=p.read_text(encoding='utf-8')
+    s=re.sub(r'^DEFAULT_JVM_OPTS=.*$', 'DEFAULT_JVM_OPTS=""', s, flags=re.M)
+    p.write_text(s, encoding='utf-8')
+PY
           chmod +x gradlew
 
       - name: Print tool versions
@@ -57,7 +64,7 @@ jobs:
           java -version
           echo "Runner: $(uname -a)"
 
-      - name: Build (clean -> build, fallback to remapJar)
+      - name: Build (clean -> build -> remapJar)
         shell: bash
         env:
           JAVA_TOOL_OPTIONS: ""
@@ -65,12 +72,7 @@ jobs:
           GRADLE_OPTS: "-Djava.net.preferIPv4Stack=true -Dhttps.protocols=TLSv1.2,TLSv1.3"
         run: |
           set -euo pipefail
-          mkdir -p build/ci
-          ./gradlew clean build -S --stacktrace --no-daemon | tee build/ci/build.log
-          if ! find . -type f -path "*/build/libs/*.jar" | grep -vqE '(-dev|-sources)\.jar$'; then
-            echo "No release jar after 'build'; running 'remapJar'..."
-            ./gradlew remapJar -S --stacktrace --no-daemon | tee -a build/ci/build.log
-          fi
+          ./gradlew --refresh-dependencies clean build remapJar -S --stacktrace --no-daemon
 
       - name: Show built jars
         shell: bash
@@ -83,13 +85,25 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
+          # Prefer non -dev/-sources jars
           mapfile -t C < <(find . -type f -path "*/build/libs/*.jar" \
-            | grep -v -- '-sources\.jar$' \
-            | grep -v -- '-dev\.jar$' \
-            | sort)
+            | grep -Ev '(-dev|-sources)\.jar$' \
+            | sort || true)
+
+          # Fallbacks commonly seen with Loom
           if [ ${#C[@]} -eq 0 ]; then
-            echo "No release jar found in */build/libs/*.jar"; exit 1
+            mapfile -t C < <(find . -type f -path "*/build/libs/*-remapped.jar" | sort || true)
           fi
+          if [ ${#C[@]} -eq 0 ]; then
+            mapfile -t C < <(find . -type f -path "*/build/libs/*fabric*.jar" | grep -Ev '(-dev|-sources)\.jar$' | sort || true)
+          fi
+
+          if [ ${#C[@]} -eq 0 ]; then
+            echo "No release jar found in */build/libs/*.jar"
+            echo "All jars for debugging:"; find . -type f -path "*/build/libs/*.jar" -print
+            exit 1
+          fi
+
           echo "Found release jar: ${C[0]}"
           echo "jar=${C[0]}" >> "$GITHUB_OUTPUT"
 
@@ -100,15 +114,20 @@ jobs:
           path: ${{ steps.jar.outputs.jar }}
           if-no-files-found: error
 
-      - name: Upload diagnostics (logs, metadata)
+      - name: Upload all jars (debug)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: all-jars
+          path: "**/build/libs/*.jar"
+
+      - name: Upload diagnostics (logs, reports)
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: diagnostics
           path: |
-            build/ci/**
             **/build/reports/**
-            **/build/libs/*.jar
             gradle.properties
             settings.gradle
             build.gradle
