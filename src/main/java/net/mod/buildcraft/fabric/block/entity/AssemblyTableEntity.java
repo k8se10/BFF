@@ -15,7 +15,7 @@ import net.mod.buildcraft.fabric.energy.MjReceiver;
 import net.mod.buildcraft.fabric.energy.SimpleMjStorage;
 import net.mod.buildcraft.fabric.registry.BCContent;
 
-public class AssemblyTableEntity extends BlockEntity implements net.minecraft.screen.NamedScreenHandlerFactory, MjReceiver {
+public class AssemblyTableEntity extends BlockEntity implements net.minecraft.screen.NamedScreenHandlerFactory, net.mod.buildcraft.fabric.energy.MjReceiver {
     private final SimpleMjStorage buffer = new SimpleMjStorage(20_000_000); // 20 MJ
     private int progress;
     private ItemStack output = ItemStack.EMPTY;
@@ -79,7 +79,7 @@ public class AssemblyTableEntity extends BlockEntity implements net.minecraft.sc
         }
         return false;
     }
-}
+
 
 
     @Override
@@ -90,4 +90,4 @@ public class AssemblyTableEntity extends BlockEntity implements net.minecraft.sc
     public net.minecraft.screen.ScreenHandler createMenu(int syncId, net.minecraft.entity.player.PlayerInventory inv, net.minecraft.entity.player.PlayerEntity player) {
         return new net.mod.buildcraft.fabric.screen.AssemblyTableScreenHandler(syncId, inv);
     }
-    
+}

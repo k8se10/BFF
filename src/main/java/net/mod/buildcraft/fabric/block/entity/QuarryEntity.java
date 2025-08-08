@@ -18,8 +18,7 @@ import net.minecraft.text.Text;
 import net.mod.buildcraft.fabric.config.BCConfig;
 import net.mod.buildcraft.fabric.block.entity.LandmarkEntity;
 
-public class QuarryEntity extends BlockEntity implements net.minecraft.screen.NamedScreenHandlerFactory, net.mod.buildcraft.fabric.energy.MjReceiver {public class RefineryEntity extends BlockEntity
-        implements net.minecraft.screen.NamedScreenHandlerFactory, MjReceiver {
+public class QuarryEntity extends BlockEntity implements net.minecraft.screen.NamedScreenHandlerFactory, net.mod.buildcraft.fabric.energy.MjReceiver {
     public void cycleSize(){
         if (!initialized) return;
         if (world == null || world.isClient) return;
@@ -123,7 +122,7 @@ public class QuarryEntity extends BlockEntity implements net.minecraft.screen.Na
         if (x > 4) { x = -4; z++; }
         if (z > 4) { z = -4; y--; } // move down a layer
     }
-}
+
 
     public int getMinX(){ return minX; } public int getMaxX(){ return maxX; }
     public int getMinZ(){ return minZ; } public int getMaxZ(){ return maxZ; }

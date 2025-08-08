@@ -42,7 +42,7 @@ public class LaserEntity extends BlockEntity implements MjReceiver, MjProvider {
             }
         }
     }
-}
+
 
     private void findTarget(){
         if (!(world instanceof net.minecraft.server.world.ServerWorld sw)) return;
@@ -68,4 +68,4 @@ public class LaserEntity extends BlockEntity implements MjReceiver, MjProvider {
     @Override public NbtCompound toInitialChunkDataNbt(){ NbtCompound tag = new NbtCompound(); writeNbt(tag); return tag; }
     @Override public void writeNbt(NbtCompound nbt){ super.writeNbt(nbt); if (targetPos != null){ nbt.putInt("tx", targetPos.getX()); nbt.putInt("ty", targetPos.getY()); nbt.putInt("tz", targetPos.getZ()); } }
     @Override public void readNbt(NbtCompound nbt){ super.readNbt(nbt); if (nbt.contains("tx")) targetPos = new BlockPos(nbt.getInt("tx"), nbt.getInt("ty"), nbt.getInt("tz")); }
-    
+}

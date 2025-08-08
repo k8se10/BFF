@@ -12,7 +12,7 @@ import net.mod.buildcraft.fabric.energy.SimpleMjStorage;
 import net.mod.buildcraft.fabric.registry.BCContent;
 import net.mod.buildcraft.fabric.config.BCConfig;
 
-public class SteamEngineEntity extends BlockEntity implements net.minecraft.screen.NamedScreenHandlerFactory, MjProvider, MjReceiver {
+public class SteamEngineEntity extends BlockEntity implements net.minecraft.screen.NamedScreenHandlerFactory, net.mod.buildcraft.fabric.energy.MjProvider, net.mod.buildcraft.fabric.energy.MjReceiver {
     private final SimpleMjStorage buffer = new SimpleMjStorage(5_000_000);
     private int burnTime = 0;
 
@@ -47,7 +47,7 @@ public class SteamEngineEntity extends BlockEntity implements net.minecraft.scre
     @Override public boolean canProvideMJ(){ return buffer.getStoredMicroMJ()>0; }
     @Override public long receiveMicroMJ(long amount){ return buffer.receiveMicroMJ(amount); }
     @Override public boolean canReceiveMJ(){ return true; }
-}
+
 
     @Override public net.minecraft.text.Text getDisplayName(){ return net.minecraft.text.Text.literal("Steam Engine"); }
     @Override public net.minecraft.screen.ScreenHandler createMenu(int id, net.minecraft.entity.player.PlayerInventory inv, net.minecraft.entity.player.PlayerEntity p){ return new net.mod.buildcraft.fabric.screen.SteamEngineScreenHandler(id, inv); }
@@ -56,3 +56,4 @@ public class SteamEngineEntity extends BlockEntity implements net.minecraft.scre
     public int getHeat() { return heat; }
 
     public boolean isRunningClient(){ return buffer.getStoredMicroMJ() > 0; }
+}

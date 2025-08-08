@@ -87,8 +87,9 @@ public class ArchitectTableEntity extends BlockEntity implements net.minecraft.s
         tag.putInt("count", count);
         return tag;
     }
-}
+
 
 
     @Override public net.minecraft.text.Text getDisplayName(){ return net.minecraft.text.Text.literal("Architect Table"); }
     @Override public net.minecraft.screen.ScreenHandler createMenu(int id, net.minecraft.entity.player.PlayerInventory inv, net.minecraft.entity.player.PlayerEntity p){ return new net.mod.buildcraft.fabric.screen.ArchitectTableScreenHandler(id, inv); }
+}

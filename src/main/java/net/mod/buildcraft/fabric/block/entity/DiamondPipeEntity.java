@@ -72,7 +72,7 @@ public class DiamondPipeEntity extends PipeBlockEntity implements net.minecraft.
             }
         }
     }
-}
+
 
     @Override public net.minecraft.text.Text getDisplayName(){ return net.minecraft.text.Text.literal("Diamond Pipe"); }
     @Override public net.minecraft.screen.ScreenHandler createMenu(int syncId, net.minecraft.entity.player.PlayerInventory inv, net.minecraft.entity.player.PlayerEntity player){
@@ -97,3 +97,4 @@ public class DiamondPipeEntity extends PipeBlockEntity implements net.minecraft.
         }
         return false;
     }
+}
