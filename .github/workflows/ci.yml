@@ -1,12 +1,87 @@
-      - name: Build (clean + remap)
+name: BuildCraft Fabric CI
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Validate Gradle Wrapper
+        uses: gradle/wrapper-validation-action@v2
+
+      - name: Set up JDK 17 (Temurin)
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 17
+
+      - name: Gradle cache
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+            .gradle
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*','**/gradle-wrapper.properties','**/settings.gradle','gradle.properties') }}
+          restore-keys: ${{ runner.os }}-gradle-
+
+      - name: Normalize gradlew + chmod
+        shell: bash
+        run: |
+          if [ -f gradlew ]; then
+            awk 'sub("\r$","")' gradlew > gradlew.nix && mv gradlew.nix gradlew
+            chmod +x gradlew
+          fi
+
+      - name: Clear DEFAULT_JVM_OPTS in wrapper
+        shell: bash
+        run: |
+          python3 - <<'PY'
+from pathlib import Path
+import re
+p = Path('gradlew')
+s = p.read_text(encoding='utf-8')
+s = re.sub(r'^DEFAULT_JVM_OPTS=.*$', 'DEFAULT_JVM_OPTS=""', s, flags=re.M)
+p.write_text(s, encoding='utf-8')
+PY
+          chmod +x gradlew
+
+      - name: Print tool versions
+        shell: bash
+        run: |
+          ./gradlew --version || true
+          java -version
+          echo "Runner: $(uname -a)"
+
+      - name: Build (clean -> build, fallback to remapJar)
+        shell: bash
         env:
           JAVA_TOOL_OPTIONS: ""
           JAVA_OPTS: ""
           GRADLE_OPTS: "-Djava.net.preferIPv4Stack=true -Dhttps.protocols=TLSv1.2,TLSv1.3"
         run: |
-          ./gradlew clean remapJar -S --stacktrace --no-daemon
+          set -euo pipefail
+          mkdir -p build/ci
+          ./gradlew clean build -S --stacktrace --no-daemon | tee build/ci/build.log
+          # If no non-dev/non-sources jars were produced, try remapJar explicitly
+          if ! find . -type f -path "*/build/libs/*.jar" | grep -vqE '(-dev|-sources)\.jar$'; then
+            echo "No release jar found after 'build'; running 'remapJar'..."
+            ./gradlew remapJar -S --stacktrace --no-daemon | tee -a build/ci/build.log
+          fi
 
       - name: Show built jars
+        shell: bash
         run: |
           echo "Jars under build/libs:"
           find . -type f -path "*/build/libs/*.jar" -print -exec ls -lh {} \;
@@ -16,7 +91,6 @@
         shell: bash
         run: |
           set -euo pipefail
-          # pick a non-dev, non-sources jar (Fabric Loom’s remapped output)
           mapfile -t C < <(find . -type f -path "*/build/libs/*.jar" \
             | grep -v -- '-sources\.jar$' \
             | grep -v -- '-dev\.jar$' \
@@ -33,3 +107,5 @@
           name: mod-build
           path: ${{ steps.jar.outputs.jar }}
           if-no-files-found: error
+
+      - name
