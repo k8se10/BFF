@@ -3,48 +3,68 @@ name: Fix Gradle Wrapper
 on:
   workflow_dispatch:
 
-permissions:
-  contents: write
-
 jobs:
-  repair:
+  fix:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
     steps:
       - name: Checkout
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
+          persist-credentials: true
 
-      - name: Download official Gradle 8.7 distribution
+      - name: Set up JDK 17 (Temurin)
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - name: Detect broken or missing wrapper
+        id: check
         shell: bash
         run: |
           set -euo pipefail
-          curl -L --fail -o gradle-8.7-bin.zip https://services.gradle.org/distributions/gradle-8.7-bin.zip
-          unzip -l gradle-8.7-bin.zip | grep -E 'gradle-wrapper-.*\.jar'
+          NEED_FIX=false
+          if [[ ! -f gradlew ]]; then NEED_FIX=true; fi
+          if [[ ! -s gradle/wrapper/gradle-wrapper.jar ]]; then NEED_FIX=true; fi
+          echo "need_fix=$NEED_FIX" >> "$GITHUB_OUTPUT"
 
-      - name: Install wrapper jar from distribution
+      - name: Bootstrap Gradle and regenerate wrapper
+        if: steps.check.outputs.need_fix == 'true'
         shell: bash
         run: |
           set -euo pipefail
-          mkdir -p gradle/wrapper
-          WRAP_PATH=$(unzip -Z1 gradle-8.7-bin.zip | grep -E 'lib/plugins/gradle-wrapper-.*\.jar' | head -n1)
-          unzip -p gradle-8.7-bin.zip "$WRAP_PATH" > gradle/wrapper/gradle-wrapper.jar
-          # normalize gradlew line endings + exec bit (if present)
-          if [ -f gradlew ]; then
-            awk 'sub("\r$","")' gradlew > gradlew.nix && mv gradlew.nix gradlew
-            chmod +x gradlew
+          GRADLE_VER=8.7
+          curl -sL "https://services.gradle.org/distributions/gradle-${GRADLE_VER}-bin.zip" -o gradle.zip
+          unzip -q gradle.zip -d "$RUNNER_TEMP/gradle"
+          export GRADLE_HOME="$RUNNER_TEMP/gradle/gradle-${GRADLE_VER}"
+          export PATH="$GRADLE_HOME/bin:$PATH"
+          gradle --version
+          gradle wrapper --gradle-version "${GRADLE_VER}"
+          chmod +x gradlew
+
+      - name: Commit wrapper files
+        if: steps.check.outputs.need_fix == 'true'
+        shell: bash
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add gradlew gradlew.bat gradle/wrapper/gradle-wrapper.properties gradle/wrapper/gradle-wrapper.jar
+          if git diff --cached --quiet; then
+            echo "No changes to commit."
+            exit 0
           fi
+          git commit -m "CI: regenerate Gradle wrapper"
+          git push
 
-      - name: Update gradle-wrapper.properties distributionUrl
+      - name: Verify wrapper
         shell: bash
         run: |
           set -euo pipefail
-          PROP=gradle/wrapper/gradle-wrapper.properties
-          mkdir -p gradle/wrapper
-          if [ ! -f "$PROP" ]; then
-            cat > "$PROP" <<'PROPS'
-distributionBase=GRADLE_USER_HOME
-distributionPath=wrapper/dists
-distributionUrl=https\://services.gradle.org/distributions/gradle-8.7-bin.zip
-zipStoreBase=GRADLE_USER_HOME
-zipSt
+          ./gradlew --version
