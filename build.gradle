@@ -8,9 +8,7 @@ version = '0.1.0+1.20.4'
 archivesBaseName = 'buildcraft-fabric'
 
 java {
-    toolchain {
-        languageVersion = JavaLanguageVersion.of(17)
-    }
+    toolchain { languageVersion = JavaLanguageVersion.of(17) }
     withSourcesJar()
 }
 
@@ -18,27 +16,41 @@ repositories {
     mavenCentral()
     maven { url = 'https://maven.fabricmc.net/' }
     maven { url = 'https://maven.terraformersmc.com/releases/' }
-    maven { url = 'https://maven.ladysnake.org/releases' } // if needed by any deps
-    maven { url = 'https://repo.spongepowered.org/repository/maven-public/' } // safe to keep
+    maven { url = 'https://repo.spongepowered.org/repository/maven-public/' } // optional
 }
 
 dependencies {
     minecraft "com.mojang:minecraft:1.20.4"
 
-    // Use layered mappings: official + Yarn (no weird 'layered+hash' string)
-    mappings(loom.layered() {
-        officialMojangMappings()
-        yarn("net.fabricmc:yarn:1.20.4+build.3:v2")
-    })
+    // Keep it simple: use Yarn directly (layered mappings optional, not required)
+    mappings "net.fabricmc:yarn:1.20.4+build.3:v2"
 
     modImplementation "net.fabricmc:fabric-loader:0.15.10"
     modImplementation "net.fabricmc.fabric-api:fabric-api:0.97.0+1.20.4"
 
-    // MixinExtras (Fabric)
+    // MixinExtras
     modImplementation "io.github.llamalad7:mixinextras-fabric:0.3.2"
     annotationProcessor "io.github.llamalad7:mixinextras-common:0.3.2"
 }
 
 loom {
+    silentMojangMappingsLicense()
+    mixin {
+        defaultRefmapName = "buildcraft-fabric.refmap.json"
+    }
+}
 
-::contentReference[oaicite:0]{index=0}
+tasks.withType(JavaCompile).configureEach {
+    options.release = 17
+}
+
+jar {
+    from("LICENSE") {
+        rename { "LICENSE_${archivesBaseName}" }
+    }
+}
+
+// Make 'build' produce a remapped mod jar in CI
+tasks.named("build") {
+    dependsOn("remapJar")
+}
