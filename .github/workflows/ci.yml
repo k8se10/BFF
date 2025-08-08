@@ -17,37 +17,23 @@ jobs:
           distribution: temurin
           java-version: 17
 
-      # If gradlew was ever committed with CRLF, normalize WITHOUT sed
       - name: Normalize gradlew line endings
         shell: bash
         run: |
           awk 'sub("\r$","")' gradlew > gradlew.nix && mv gradlew.nix gradlew
           chmod +x gradlew
 
-      # Some earlier steps (or a bad patch) can corrupt DEFAULT_JVM_OPTS.
-      # Force it to empty using Python (no sed), then chmod again.
-      - name: Strip wrapper DEFAULT_JVM_OPTS
+      - name: Clear wrapper DEFAULT_JVM_OPTS safely
         shell: bash
         run: |
-          python3 - << 'PY'
-import re, pathlib
-p = pathlib.Path("gradlew")
-s = p.read_text(encoding="utf-8")
-s = re.sub(r'^DEFAULT_JVM_OPTS=.*$', 'DEFAULT_JVM_OPTS=""', s, flags=re.M)
-p.write_text(s, encoding="utf-8")
-PY
+          python3 -c "import re, pathlib; p=pathlib.Path('gradlew'); s=p.read_text(encoding='utf-8'); s=re.sub(r'^DEFAULT_JVM_OPTS=.*$', 'DEFAULT_JVM_OPTS=\"\"', s, flags=re.M); p.write_text(s, encoding='utf-8')"
           chmod +x gradlew
 
-      # Make sure no weird JAVA_* options or sed-aliases leak into the env
-      - name: Clean JVM env + set Gradle opts
-        shell: bash
-        run: |
-          echo 'JAVA_TOOL_OPTIONS=' >> $GITHUB_ENV
-          echo 'JAVA_OPTS=' >> $GITHUB_ENV
-          echo 'GRADLE_OPTS=-Djava.net.preferIPv4Stack=true -Dhttps.protocols=TLSv1.2,TLSv1.3' >> $GITHUB_ENV
-
       - name: Build (refresh deps)
-        shell: bash
+        env:
+          JAVA_TOOL_OPTIONS: ""
+          JAVA_OPTS: ""
+          GRADLE_OPTS: "-Djava.net.preferIPv4Stack=true -Dhttps.protocols=TLSv1.2,TLSv1.3"
         run: ./gradlew --refresh-dependencies build -S --stacktrace --no-daemon
 
       - name: Publish build artifacts
