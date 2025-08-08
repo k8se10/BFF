@@ -1,88 +1,90 @@
 plugins {
-    id 'java'
-    id 'fabric-loom' version '1.6.12'
-    id 'maven-publish'
+  id 'fabric-loom' version '1.6.12'
+  id 'maven-publish'
 }
 
-group = project.findProperty('maven_group') ?: 'net.mod.buildcraft'
-version = project.findProperty('mod_version') ?: '1.0.0'
-
-java {
-    toolchain {
-        languageVersion = JavaLanguageVersion.of(17)
-    }
-    withSourcesJar()
-}
+group = project.group
+version = project.mod_version
 
 base {
-    archivesName.set(project.findProperty('archives_name') ?: 'buildcraft-fabric')
+  archivesName = project.archives_base_name
 }
 
 repositories {
-    // Order matters; keep Central first
-    mavenCentral()
-    maven { url = 'https://maven.fabricmc.net/' }
-    maven { url = 'https://maven.terraformersmc.com/releases/' }
-    maven { url = 'https://maven.quiltmc.org/repository/release/' }
-    maven { url = 'https://repo.spongepowered.org/repository/maven-public/' }
-    maven { url = 'https://maven.ladysnake.org/releases' }
+  mavenCentral()
+  maven { url = 'https://maven.fabricmc.net/' }
+  maven { url = 'https://maven.terraformersmc.com/releases/' }
+  maven { url = 'https://maven.quiltmc.org/repository/release/' }
+  maven { url = 'https://repo.spongepowered.org/repository/maven-public/' }
 }
 
-def MC_VERSION     = project.findProperty('minecraft_version') ?: '1.20.4'
-def YARN_MAPPINGS  = project.findProperty('yarn_mappings')     ?: '1.20.4+build.3'
-def LOADER_VERSION = project.findProperty('loader_version')    ?: '0.15.7'
-def FABRIC_API     = project.findProperty('fabric_api_version')?: '0.97.5+1.20.4'
-def MIXIN_EXTRAS   = project.findProperty('mixin_extras_version') ?: '0.3.2' // remove if unused
-
 dependencies {
-    minecraft "com.mojang:minecraft:${MC_VERSION}"
-    mappings  "net.fabricmc:yarn:${YARN_MAPPINGS}:v2"
+  // MC + mappings + loader
+  minecraft "com.mojang:minecraft:${minecraft_version}"
+  mappings "net.fabricmc:yarn:${yarn_mappings}:v2"
+  modImplementation "net.fabricmc:fabric-loader:${loader_version}"
 
-    modImplementation "net.fabricmc:fabric-loader:${LOADER_VERSION}"
-    modImplementation "net.fabricmc.fabric-api:fabric-api:${FABRIC_API}"
-
-    // Optional (delete if you don't use it)
-    modImplementation "io.github.llamalad7:mixinextras-fabric:${MIXIN_EXTRAS}"
-    include          "io.github.llamalad7:mixinextras-fabric:${MIXIN_EXTRAS}"
+  // Fabric API (umbrella)
+  modImplementation "net.fabricmc.fabric-api:fabric-api:${fabric_api_version}"
 }
 
 loom {
-    // put loom config here if needed (e.g. accessWidenerPath)
-    // accessWidenerPath = file("src/main/resources/yourmodid.accesswidener")
+  splitEnvironmentSourceSets()
+
+  runs {
+    client {
+      client()
+      ideConfigGenerated(true)
+      runDir("run/client")
+    }
+    server {
+      server()
+      ideConfigGenerated(true)
+      runDir("run/server")
+    }
+  }
 }
 
-processResources {
-    inputs.property "version", project.version
-    filesMatching(['fabric.mod.json', 'quilt.mod.json']) {
-        expand "version": project.version
-    }
+java {
+  toolchain {
+    languageVersion = JavaLanguageVersion.of(project.java_version as int)
+  }
+  withSourcesJar()
 }
 
 tasks.withType(JavaCompile).configureEach {
-    options.release = 17
-    options.encoding = 'UTF-8'
+  options.release = project.java_version as int
+  options.encoding = "UTF-8"
 }
 
 jar {
-    // manifest { attributes 'Implementation-Title': base.archivesName.get(), 'Implementation-Version': project.version }
+  from("LICENSE") {
+    rename { "${it}_${project.archives_base_name}" }
+  }
 }
 
-// ensure a game-ready jar exists after build
-tasks.named('build') {
-    dependsOn tasks.named('remapJar')
+// Make the standard build produce a remapped jar too (what you ship)
+tasks.register("ciJar") {
+  dependsOn("build", "remapJar")
 }
 
 publishing {
-    publications {
-        create('mavenJava', MavenPublication) {
-            from components.java
-            groupId = project.group
-            artifactId = base.archivesName.get()
-            version = project.version
-        }
+  publications {
+    mavenJava(MavenPublication) {
+      from components.java
+      artifact(remapJar) {
+        builtBy remapJar
+      }
+      artifact(sourcesJar)
+      groupId = project.group
+      artifactId = project.archives_base_name
+      version = project.version
     }
-    repositories {
-        // mavenLocal()
-        // maven { url = uri("file://${project.rootDir}/repo") }
+  }
+  repositories {
+    maven {
+      name = "localBuild"
+      url = uri("${layout.buildDirectory.dir('repo')}")
     }
+  }
 }
