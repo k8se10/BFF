@@ -29,19 +29,27 @@ jobs:
             ~/.gradle/caches
             ~/.gradle/wrapper
             .gradle
-          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties', 'settings.gradle', 'gradle.properties') }}
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*','**/gradle-wrapper.properties','settings.gradle','gradle.properties') }}
           restore-keys: ${{ runner.os }}-gradle-
 
-      - name: Prepare gradlew
+      # If the wrapper is missing OR the JAR is empty, bootstrap Gradle and regenerate wrapper
+      - name: Bootstrap Gradle wrapper (if missing/broken)
         shell: bash
         run: |
-          if [ -f gradlew ]; then
-            sed -i 's/\r$//' gradlew
+          set -euo pipefail
+          if [ ! -f gradlew ] || [ ! -s gradle/wrapper/gradle-wrapper.jar ]; then
+            echo "Wrapper missing or broken; bootstrapping Gradle and regenerating wrapper…"
+            GRADLE_VER=8.7
+            curl -sL "https://services.gradle.org/distributions/gradle-${GRADLE_VER}-bin.zip" -o gradle.zip
+            unzip -q gradle.zip -d "$RUNNER_TEMP/gradle"
+            export GRADLE_HOME="$RUNNER_TEMP/gradle/gradle-${GRADLE_VER}"
+            export PATH="$GRADLE_HOME/bin:$PATH"
+            gradle --version
+            gradle wrapper --gradle-version "${GRADLE_VER}"
             chmod +x gradlew
-            # Nuke any bad defaults that broke earlier runs
-            if grep -q '^DEFAULT_JVM_OPTS=' gradlew; then
-              sed -i 's/^DEFAULT_JVM_OPTS=.*/DEFAULT_JVM_OPTS=""/' gradlew
-            fi
+          else
+            echo "Wrapper looks present and non-empty."
+            ls -l gradlew gradle/wrapper/gradle-wrapper.jar || true
           fi
 
       - name: Build (clean -> build -> remapJar)
@@ -50,6 +58,7 @@ jobs:
           JAVA_TOOL_OPTIONS: ""
           GRADLE_OPTS: "-Djava.net.preferIPv4Stack=true -Dhttps.protocols=TLSv1.2,TLSv1.3"
         run: |
+          set -euo pipefail
           ./gradlew --refresh-dependencies clean build remapJar -S --no-daemon
 
       - name: List jars
