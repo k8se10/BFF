@@ -18,7 +18,7 @@ import net.mod.buildcraft.fabric.screen.RefineryScreenHandler;
  * Fixed class header and moved fields/methods into the body.
  * Minimal implementation to satisfy interfaces and compile cleanly.
  */
-public class RefineryEntity extends BlockEntity implements NamedScreenHandlerFactory, MjReceiver{
+public class RefineryEntity extends BlockEntity implements NamedScreenHandlerFactory, MjReceiver {
 
     private final SimpleMjStorage buffer = new SimpleMjStorage(5_000_000); // 5 MJ in micro-MJ
     private long in1 = 0;

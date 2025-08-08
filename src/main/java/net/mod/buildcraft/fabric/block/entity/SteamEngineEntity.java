@@ -18,7 +18,7 @@ import net.mod.buildcraft.fabric.screen.SteamEngineScreenHandler;
 /**
  * Fixed header and moved fields to body.
  */
-public class SteamEngineEntity extends BlockEntity implements NamedScreenHandlerFactory, MjProvider, MjReceiver{
+public class SteamEngineEntity extends BlockEntity implements NamedScreenHandlerFactory, MjProvider, MjReceiver {
 
     private final SimpleMjStorage buffer = new SimpleMjStorage(5_000_000); // 5 MJ
     private int heat = 0;

@@ -22,7 +22,7 @@ import net.mod.buildcraft.fabric.screen.QuarryScreenHandler;
  * Cleaned header (removed stray comma/method after brace) and provided minimal API.
  * Fill in logic as needed later.
  */
-public class QuarryEntity extends BlockEntity implements NamedScreenHandlerFactory, MjReceiver{
+public class QuarryEntity extends BlockEntity implements NamedScreenHandlerFactory, MjReceiver {
 
     private final SimpleMjStorage buffer = new SimpleMjStorage(10_000_000);
 

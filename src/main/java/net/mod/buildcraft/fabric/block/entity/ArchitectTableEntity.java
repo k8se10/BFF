@@ -13,7 +13,7 @@ import net.minecraft.world.World;
 import net.mod.buildcraft.fabric.item.BlueprintItem;
 import net.mod.buildcraft.fabric.registry.BCContent;
 
-public class ArchitectTableEntity extends BlockEntity implements net.minecraft.screen.NamedScreenHandlerFactory {public ArchitectTableEntity(BlockPos pos, BlockState state){ super(BCContent.ARCHITECT_TABLE_BE, pos, state); }
+public class ArchitectTableEntity extends BlockEntity implements net.minecraft.screen.NamedScreenHandlerFactory {, public ArchitectTableEntity(BlockPos pos, BlockState state){ super(BCContent.ARCHITECT_TABLE_BE, pos, state); }
 
     public boolean tryWriteBlueprint(ItemStack held, net.minecraft.entity.player.PlayerEntity player){
         if (!(held.getItem() instanceof BlueprintItem)) { player.sendMessage(Text.literal("Hold a Blueprint"), true); return false; }

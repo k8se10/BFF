@@ -16,7 +16,7 @@ import net.minecraft.network.packet.Packet;
 import net.minecraft.network.packet.s2c.play.BlockEntityUpdateS2CPacket;
 import net.minecraft.util.math.Direction;
 
-public class LaserEntity extends BlockEntity implements MjReceiver, MjProvider{private final SimpleMjStorage buffer = new SimpleMjStorage(2_000_000); // 2 MJ
+public class LaserEntity extends BlockEntity implements MjReceiver, MjProvider {, private final SimpleMjStorage buffer = new SimpleMjStorage(2_000_000); // 2 MJ
     private BlockPos targetPos = null;
     private int findCooldown = 0;
     public LaserEntity(BlockPos pos, BlockState state){ super(BCContent.LASER_BE, pos, state); }

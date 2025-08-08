@@ -32,7 +32,7 @@ public BlockState getStateForNeighborUpdate(BlockState state, net.minecraft.util
             case WEST -> WEST;
             case UP -> UP;
             case DOWN -> DOWN;
-        }connect);
+        }, connect);
     }
 @Override
 public void onBlockAdded(BlockState state, net.minecraft.world.World world, BlockPos pos, BlockState oldState, boolean notify) {

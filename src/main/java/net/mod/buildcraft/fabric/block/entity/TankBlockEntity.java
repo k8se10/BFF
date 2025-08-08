@@ -19,7 +19,7 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.mod.buildcraft.fabric.registry.BCContent;
 
-public class TankBlockEntity extends BlockEntity implements net.minecraft.screen.NamedScreenHandlerFactory {// 16 buckets
+public class TankBlockEntity extends BlockEntity implements net.minecraft.screen.NamedScreenHandlerFactory {, // 16 buckets
     public static final long CAPACITY = 16 * FluidConstants.BUCKET;
 
     private final SingleVariantStorage<FluidVariant> storage = new SingleVariantStorage<>() {
@@ -62,4 +62,4 @@ public net.minecraft.screen.ScreenHandler createMenu(int syncId, net.minecraft.e
         if (!(world instanceof ServerWorld sw)) return;
         // no-op for now
     }
- 
+}

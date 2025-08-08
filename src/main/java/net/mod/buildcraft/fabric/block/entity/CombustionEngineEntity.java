@@ -25,7 +25,7 @@ import net.fabricmc.fabric.api.transfer.v1.transaction.Transaction;
 import net.mod.buildcraft.fabric.fluid.BCFluids;
 import net.mod.buildcraft.fabric.config.BCConfig;
 
-public class CombustionEngineEntity extends BlockEntity implements net.minecraft.screen.NamedScreenHandlerFactory, MjProvider, MjReceiver{private final SimpleMjStorage buffer = new SimpleMjStorage(10_000_000);
+public class CombustionEngineEntity extends BlockEntity implements net.minecraft.screen.NamedScreenHandlerFactory, MjProvider, MjReceiver {, private final SimpleMjStorage buffer = new SimpleMjStorage(10_000_000);
     private int heat = 0;
     private long fuelMb = 0; // in mB
     private long coolantMb = 0; // in mB
