@@ -16,9 +16,9 @@ import net.minecraft.entity.player.PlayerEntity;
 
 public class AssemblyTableBlock extends BlockWithEntity {
     public AssemblyTableBlock() { super(Settings.create().strength(2.0f)); }
-    @Override 
     @Override
-    public ActionResult onUse(BlockState state, net.minecraft.world.World world, BlockPos pos, PlayerEntity player, Hand hand, BlockHitResult hit) {
+@Override
+public ActionResult onUse(BlockState state, net.minecraft.world.World world, BlockPos pos, PlayerEntity player, Hand hand, BlockHitResult hit) {
         if (!world.isClient) {
             var be = world.getBlockEntity(pos);
             if (be instanceof net.mod.buildcraft.fabric.block.entity.AssemblyTableEntity) {
@@ -30,7 +30,8 @@ public class AssemblyTableBlock extends BlockWithEntity {
     }
 
     public BlockEntity createBlockEntity(BlockPos pos, BlockState state){ return new AssemblyTableEntity(pos, state); }
-    @Override public <T extends BlockEntity> BlockEntityTicker<T> getTicker(World world, BlockState state, BlockEntityType<T> type){
+@Override
+public <T extends BlockEntity> BlockEntityTicker<T> getTicker(World world, BlockState state, BlockEntityType<T> type){
         return world.isClient ? null : (w,p,s,be) -> { if (be instanceof AssemblyTableEntity a) a.serverTick(); };
     }
 }

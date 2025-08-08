@@ -183,21 +183,18 @@ public class PipeBlockEntity extends BlockEntity {
             world.updateListeners(pos, getCachedState(), getCachedState(), 3);
         }
     }
-
-    @Override
-    public Packet<ClientPlayPacketListener> toUpdatePacket() {
+@Override
+public Packet<ClientPlayPacketListener> toUpdatePacket() {
         return BlockEntityUpdateS2CPacket.create(this);
     }
-
-    @Override
-    public NbtCompound toInitialChunkDataNbt() {
+@Override
+public NbtCompound toInitialChunkDataNbt() {
         NbtCompound tag = new NbtCompound();
         writeNbt(tag);
         return tag;
     }
-
-    @Override
-    public void writeNbt(NbtCompound nbt) {
+@Override
+public void writeNbt(NbtCompound nbt) {
         super.writeNbt(nbt);
         // server -> client clientItems snapshot
         var list = new net.minecraft.nbt.NbtList();
@@ -224,9 +221,8 @@ public class PipeBlockEntity extends BlockEntity {
         }
         nbt.put("items", itemsList);
     }
-
-    @Override
-    public void readNbt(NbtCompound nbt) {
+@Override
+public void readNbt(NbtCompound nbt) {
         super.readNbt(nbt);
         clientItems.clear();
         if (nbt.contains("clientItems", NbtElement.LIST_TYPE)) {

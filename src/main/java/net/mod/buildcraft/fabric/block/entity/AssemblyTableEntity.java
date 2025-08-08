@@ -15,15 +15,15 @@ import net.mod.buildcraft.fabric.energy.MjReceiver;
 import net.mod.buildcraft.fabric.energy.SimpleMjStorage;
 import net.mod.buildcraft.fabric.registry.BCContent;
 
-public class AssemblyTableEntity extends BlockEntity implements net.minecraft.screen.NamedScreenHandlerFactory, net.mod.buildcraft.fabric.energy.MjReceiver {
-    private final SimpleMjStorage buffer = new SimpleMjStorage(20_000_000); // 20 MJ
+public class AssemblyTableEntity extends BlockEntity implements net.minecraft.screen.NamedScreenHandlerFactory, net.mod.buildcraft.fabric.energy.MjReceiver {, private final SimpleMjStorage buffer = new SimpleMjStorage(20_000_000); // 20 MJ
     private int progress;
     private ItemStack output = ItemStack.EMPTY;
 
     public AssemblyTableEntity(BlockPos pos, BlockState state){ super(BCContent.ASSEMBLY_TABLE_BE, pos, state); }
-
-    @Override public long receiveMicroMJ(long amount){ return buffer.receiveMicroMJ(amount); }
-    @Override public boolean canReceiveMJ(){ return true; }
+@Override
+public long receiveMicroMJ(long amount){ return buffer.receiveMicroMJ(amount); }
+@Override
+public boolean canReceiveMJ(){ return true; }
 
     public void serverTick(){
         if (!(world instanceof ServerWorld sw)) return;
@@ -79,15 +79,12 @@ public class AssemblyTableEntity extends BlockEntity implements net.minecraft.sc
         }
         return false;
     }
-
-
-
-    @Override
-    public net.minecraft.text.Text getDisplayName() {
+@Override
+public net.minecraft.text.Text getDisplayName() {
         return net.minecraft.text.Text.literal("Assembly Table");
     }
-    @Override
-    public net.minecraft.screen.ScreenHandler createMenu(int syncId, net.minecraft.entity.player.PlayerInventory inv, net.minecraft.entity.player.PlayerEntity player) {
+@Override
+public net.minecraft.screen.ScreenHandler createMenu(int syncId, net.minecraft.entity.player.PlayerInventory inv, net.minecraft.entity.player.PlayerEntity player) {
         return new net.mod.buildcraft.fabric.screen.AssemblyTableScreenHandler(syncId, inv);
     }
 }

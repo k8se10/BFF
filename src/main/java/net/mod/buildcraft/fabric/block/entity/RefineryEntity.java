@@ -15,14 +15,13 @@ import net.mod.buildcraft.fabric.fluid.BCFluids;
 import net.mod.buildcraft.fabric.registry.BCContent;
 
 public class RefineryEntity extends BlockEntity implements net.minecraft.screen.NamedScreenHandlerFactory, MjReceiver {public class RefineryEntity extends BlockEntity
-        implements net.minecraft.screen.NamedScreenHandlerFactory, MjReceiver {
-
-    private final SimpleMjStorage buffer = new SimpleMjStorage(5_000_000); // 5 MJ
+        implements net.minecraft.screen.NamedScreenHandlerFactory, MjReceiver {, private final SimpleMjStorage buffer = new SimpleMjStorage(5_000_000); // 5 MJ
 
     public RefineryEntity(BlockPos pos, BlockState state){ super(BCContent.REFINERY_BE, pos, state); }
-
-    @Override public long receiveMicroMJ(long amount){ return buffer.receiveMicroMJ(amount); }
-    @Override public boolean canReceiveMJ(){ return true; }
+@Override
+public long receiveMicroMJ(long amount){ return buffer.receiveMicroMJ(amount); }
+@Override
+public boolean canReceiveMJ(){ return true; }
 
     public void serverTick(){ if(world==null||world.isClient) return;
         if (!(world instanceof ServerWorld sw)) return;
@@ -53,9 +52,10 @@ public class RefineryEntity extends BlockEntity implements net.minecraft.screen.
         }
     }
 }
-
-    @Override public net.minecraft.text.Text getDisplayName(){ return net.minecraft.text.Text.literal("Refinery"); }
-    @Override public net.minecraft.screen.ScreenHandler createMenu(int id, net.minecraft.entity.player.PlayerInventory inv, net.minecraft.entity.player.PlayerEntity p){ return new net.mod.buildcraft.fabric.screen.RefineryScreenHandler(id, inv); }
+@Override
+public net.minecraft.text.Text getDisplayName(){ return net.minecraft.text.Text.literal("Refinery"); }
+@Override
+public net.minecraft.screen.ScreenHandler createMenu(int id, net.minecraft.entity.player.PlayerInventory inv, net.minecraft.entity.player.PlayerEntity p){ return new net.mod.buildcraft.fabric.screen.RefineryScreenHandler(id, inv); }
 
 
     public long getIn1() { return in1; }

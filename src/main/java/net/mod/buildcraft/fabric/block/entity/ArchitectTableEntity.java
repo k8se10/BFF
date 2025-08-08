@@ -13,8 +13,7 @@ import net.minecraft.world.World;
 import net.mod.buildcraft.fabric.item.BlueprintItem;
 import net.mod.buildcraft.fabric.registry.BCContent;
 
-public class ArchitectTableEntity extends BlockEntity implements net.minecraft.screen.NamedScreenHandlerFactory {
-    public ArchitectTableEntity(BlockPos pos, BlockState state){ super(BCContent.ARCHITECT_TABLE_BE, pos, state); }
+public class ArchitectTableEntity extends BlockEntity implements net.minecraft.screen.NamedScreenHandlerFactory {, public ArchitectTableEntity(BlockPos pos, BlockState state){ super(BCContent.ARCHITECT_TABLE_BE, pos, state); }
 
     public boolean tryWriteBlueprint(ItemStack held, net.minecraft.entity.player.PlayerEntity player){
         if (!(held.getItem() instanceof BlueprintItem)) { player.sendMessage(Text.literal("Hold a Blueprint"), true); return false; }
@@ -87,9 +86,8 @@ public class ArchitectTableEntity extends BlockEntity implements net.minecraft.s
         tag.putInt("count", count);
         return tag;
     }
-
-
-
-    @Override public net.minecraft.text.Text getDisplayName(){ return net.minecraft.text.Text.literal("Architect Table"); }
-    @Override public net.minecraft.screen.ScreenHandler createMenu(int id, net.minecraft.entity.player.PlayerInventory inv, net.minecraft.entity.player.PlayerEntity p){ return new net.mod.buildcraft.fabric.screen.ArchitectTableScreenHandler(id, inv); }
+@Override
+public net.minecraft.text.Text getDisplayName(){ return net.minecraft.text.Text.literal("Architect Table"); }
+@Override
+public net.minecraft.screen.ScreenHandler createMenu(int id, net.minecraft.entity.player.PlayerInventory inv, net.minecraft.entity.player.PlayerEntity p){ return new net.mod.buildcraft.fabric.screen.ArchitectTableScreenHandler(id, inv); }
 }

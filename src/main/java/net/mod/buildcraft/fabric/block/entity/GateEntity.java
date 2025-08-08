@@ -28,16 +28,14 @@ public class GateEntity extends BlockEntity {
     public String getTrigger() { return triggerId; }
     public String getAction() { return actionId; }
     public boolean isActive() { return active; }
-
-    @Override
-    public void writeNbt(NbtCompound tag) {
+@Override
+public void writeNbt(NbtCompound tag) {
         super.writeNbt(tag);
         tag.putString("Trigger", triggerId);
         tag.putString("Action", actionId);
     }
-
-    @Override
-    public void readNbt(NbtCompound tag) {
+@Override
+public void readNbt(NbtCompound tag) {
         super.readNbt(tag);
         triggerId = tag.getString("Trigger");
         actionId = tag.getString("Action");

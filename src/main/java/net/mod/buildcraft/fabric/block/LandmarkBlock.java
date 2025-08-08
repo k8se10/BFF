@@ -11,8 +11,10 @@ import net.mod.buildcraft.fabric.block.entity.LandmarkEntity;
 
 public class LandmarkBlock extends BlockWithEntity {
     public LandmarkBlock(){ super(Settings.create().nonOpaque().strength(0.5f)); }
-    @Override public BlockEntity createBlockEntity(BlockPos pos, BlockState state){ return new LandmarkEntity(pos, state); }
-    @Override public <T extends BlockEntity> BlockEntityTicker<T> getTicker(World world, BlockState state, BlockEntityType<T> type){
+@Override
+public BlockEntity createBlockEntity(BlockPos pos, BlockState state){ return new LandmarkEntity(pos, state); }
+@Override
+public <T extends BlockEntity> BlockEntityTicker<T> getTicker(World world, BlockState state, BlockEntityType<T> type){
         return world.isClient ? null : (w,p,s,be)->{ if (be instanceof LandmarkEntity l) l.serverTick(); };
     }
 }

@@ -14,12 +14,13 @@ import net.mod.buildcraft.fabric.energy.MjReceiver;
 import net.mod.buildcraft.fabric.energy.SimpleMjStorage;
 import net.mod.buildcraft.fabric.registry.BCContent;
 
-public class FillerEntity extends BlockEntity implements MjReceiver {
-    private final SimpleMjStorage buffer = new SimpleMjStorage(5_000_000); // 5 MJ
+public class FillerEntity extends BlockEntity implements MjReceiver {, private final SimpleMjStorage buffer = new SimpleMjStorage(5_000_000); // 5 MJ
     private int x=-2,z=-2; private boolean done=false; private int tick;
     public FillerEntity(BlockPos pos, BlockState state){ super(BCContent.FILLER_BE, pos, state); }
-    @Override public long receiveMicroMJ(long amount){ return buffer.receiveMicroMJ(amount); }
-    @Override public boolean canReceiveMJ(){ return true; }
+@Override
+public long receiveMicroMJ(long amount){ return buffer.receiveMicroMJ(amount); }
+@Override
+public boolean canReceiveMJ(){ return true; }
 
     public void serverTick(){
         if (done) return;

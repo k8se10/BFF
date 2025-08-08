@@ -9,18 +9,15 @@ import net.mod.buildcraft.fabric.energy.MjReceiver;
 import net.mod.buildcraft.fabric.energy.SimpleMjStorage;
 import net.mod.buildcraft.fabric.registry.BCContent;
 
-public class RedstoneEngineEntity extends BlockEntity implements net.minecraft.screen.NamedScreenHandlerFactory, MjProvider, MjReceiver {
-    private final SimpleMjStorage buffer = new SimpleMjStorage(500_000); // 0.5 MJ buffer
+public class RedstoneEngineEntity extends BlockEntity implements net.minecraft.screen.NamedScreenHandlerFactory, MjProvider, MjReceiver {, private final SimpleMjStorage buffer = new SimpleMjStorage(500_000); // 0.5 MJ buffer
 
     public RedstoneEngineEntity(BlockPos pos, BlockState state) { super(BCContent.REDSTONE_ENGINE_BE, pos, state); }
-
-    
-    @Override
-    public net.minecraft.text.Text getDisplayName() {
+@Override
+public net.minecraft.text.Text getDisplayName() {
         return net.minecraft.text.Text.literal("Redstone Engine");
     }
-    @Override
-    public net.minecraft.screen.ScreenHandler createMenu(int syncId, net.minecraft.entity.player.PlayerInventory inv, net.minecraft.entity.player.PlayerEntity player) {
+@Override
+public net.minecraft.screen.ScreenHandler createMenu(int syncId, net.minecraft.entity.player.PlayerInventory inv, net.minecraft.entity.player.PlayerEntity player) {
         return new net.mod.buildcraft.fabric.screen.RedstoneEngineScreenHandler(syncId, inv);
     }
     
@@ -44,9 +41,12 @@ public class RedstoneEngineEntity extends BlockEntity implements net.minecraft.s
         }
         buffer.extractMicroMJ(toSend - remaining);
     }
-
-    @Override public long extractMicroMJ(long max) { return buffer.extractMicroMJ(max); }
-    @Override public boolean canProvideMJ() { return buffer.getStoredMicroMJ() > 0; }
-    @Override public long receiveMicroMJ(long amount) { return buffer.receiveMicroMJ(amount); }
-    @Override public boolean canReceiveMJ() { return buffer.getStoredMicroMJ() < buffer.getCapacityMicroMJ(); }
+@Override
+public long extractMicroMJ(long max) { return buffer.extractMicroMJ(max); }
+@Override
+public boolean canProvideMJ() { return buffer.getStoredMicroMJ() > 0; }
+@Override
+public long receiveMicroMJ(long amount) { return buffer.receiveMicroMJ(amount); }
+@Override
+public boolean canReceiveMJ() { return buffer.getStoredMicroMJ() < buffer.getCapacityMicroMJ(); }
 }

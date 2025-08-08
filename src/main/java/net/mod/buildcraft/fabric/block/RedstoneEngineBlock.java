@@ -19,9 +19,8 @@ public class RedstoneEngineBlock extends BlockWithEntity {
     public RedstoneEngineBlock() { super(Settings.create().strength(0.8f)); }
 
     @Override
-    
-    @Override
-    public ActionResult onUse(BlockState state, net.minecraft.world.World world, BlockPos pos, PlayerEntity player, Hand hand, BlockHitResult hit) {
+@Override
+public ActionResult onUse(BlockState state, net.minecraft.world.World world, BlockPos pos, PlayerEntity player, Hand hand, BlockHitResult hit) {
         if (!world.isClient) {
             var be = world.getBlockEntity(pos);
             if (be instanceof net.mod.buildcraft.fabric.block.entity.RedstoneEngineEntity) {
@@ -35,9 +34,8 @@ public class RedstoneEngineBlock extends BlockWithEntity {
     public BlockEntity createBlockEntity(BlockPos pos, BlockState state) {
         return new RedstoneEngineEntity(pos, state);
     }
-
-    @Override
-    public <T extends BlockEntity> BlockEntityTicker<T> getTicker(World world, BlockState state, BlockEntityType<T> type) {
+@Override
+public <T extends BlockEntity> BlockEntityTicker<T> getTicker(World world, BlockState state, BlockEntityType<T> type) {
         return world.isClient ? null : (w,p,s,be) -> {
             if (be instanceof RedstoneEngineEntity re) re.serverTick();
         };

@@ -16,16 +16,18 @@ import net.minecraft.network.packet.Packet;
 import net.minecraft.network.packet.s2c.play.BlockEntityUpdateS2CPacket;
 import net.minecraft.util.math.Direction;
 
-public class LaserEntity extends BlockEntity implements MjReceiver, MjProvider {
-    private final SimpleMjStorage buffer = new SimpleMjStorage(2_000_000); // 2 MJ
+public class LaserEntity extends BlockEntity implements MjReceiver, MjProvider {, private final SimpleMjStorage buffer = new SimpleMjStorage(2_000_000); // 2 MJ
     private BlockPos targetPos = null;
     private int findCooldown = 0;
     public LaserEntity(BlockPos pos, BlockState state){ super(BCContent.LASER_BE, pos, state); }
-
-    @Override public long receiveMicroMJ(long amount){ return buffer.receiveMicroMJ(amount); }
-    @Override public boolean canReceiveMJ(){ return true; }
-    @Override public long extractMicroMJ(long max){ return buffer.extractMicroMJ(max); }
-    @Override public boolean canProvideMJ(){ return buffer.getStoredMicroMJ() > 0; }
+@Override
+public long receiveMicroMJ(long amount){ return buffer.receiveMicroMJ(amount); }
+@Override
+public boolean canReceiveMJ(){ return true; }
+@Override
+public long extractMicroMJ(long max){ return buffer.extractMicroMJ(max); }
+@Override
+public boolean canProvideMJ(){ return buffer.getStoredMicroMJ() > 0; }
 
     public void serverTick(){ if(world==null||world.isClient) return; if(buffer.getStoredMicroMJ()==0 && world.getTime()%5!=0) return;
         if (findCooldown-- <= 0){ findCooldown = 20; findTarget(); sync(); }
@@ -64,8 +66,12 @@ public class LaserEntity extends BlockEntity implements MjReceiver, MjProvider {
     }
     public BlockPos getTargetPos(){ return targetPos; }
     private void sync(){ if (world != null && !world.isClient) world.updateListeners(pos, getCachedState(), getCachedState(), 3); }
-    @Override public Packet<ClientPlayPacketListener> toUpdatePacket(){ return BlockEntityUpdateS2CPacket.create(this); }
-    @Override public NbtCompound toInitialChunkDataNbt(){ NbtCompound tag = new NbtCompound(); writeNbt(tag); return tag; }
-    @Override public void writeNbt(NbtCompound nbt){ super.writeNbt(nbt); if (targetPos != null){ nbt.putInt("tx", targetPos.getX()); nbt.putInt("ty", targetPos.getY()); nbt.putInt("tz", targetPos.getZ()); } }
-    @Override public void readNbt(NbtCompound nbt){ super.readNbt(nbt); if (nbt.contains("tx")) targetPos = new BlockPos(nbt.getInt("tx"), nbt.getInt("ty"), nbt.getInt("tz")); }
+@Override
+public Packet<ClientPlayPacketListener> toUpdatePacket(){ return BlockEntityUpdateS2CPacket.create(this); }
+@Override
+public NbtCompound toInitialChunkDataNbt(){ NbtCompound tag = new NbtCompound(); writeNbt(tag); return tag; }
+@Override
+public void writeNbt(NbtCompound nbt){ super.writeNbt(nbt); if (targetPos != null){ nbt.putInt("tx", targetPos.getX()); nbt.putInt("ty", targetPos.getY()); nbt.putInt("tz", targetPos.getZ()); } }
+@Override
+public void readNbt(NbtCompound nbt){ super.readNbt(nbt); if (nbt.contains("tx")) targetPos = new BlockPos(nbt.getInt("tx"), nbt.getInt("ty"), nbt.getInt("tz")); }
 }

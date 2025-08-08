@@ -16,11 +16,12 @@ import net.mod.buildcraft.fabric.block.entity.ArchitectTableEntity;
 
 public class ArchitectTableBlock extends BlockWithEntity {
     public ArchitectTableBlock(){ super(Settings.create().strength(2.0f)); }
-    @Override public BlockEntity createBlockEntity(BlockPos pos, BlockState state){ return new ArchitectTableEntity(pos, state); }
-    @Override public <T extends BlockEntity> BlockEntityTicker<T> getTicker(World w, BlockState s, BlockEntityType<T> t){ return null; }
-
-    @Override
-    public ActionResult onUse(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockHitResult hit) {
+@Override
+public BlockEntity createBlockEntity(BlockPos pos, BlockState state){ return new ArchitectTableEntity(pos, state); }
+@Override
+public <T extends BlockEntity> BlockEntityTicker<T> getTicker(World w, BlockState s, BlockEntityType<T> t){ return null; }
+@Override
+public ActionResult onUse(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockHitResult hit) {
         if(!world.isClient){ var be = world.getBlockEntity(pos); if (be instanceof net.minecraft.screen.NamedScreenHandlerFactory f) player.openHandledScreen(f);}
         if (world.isClient) return ActionResult.SUCCESS;
         var be = world.getBlockEntity(pos);

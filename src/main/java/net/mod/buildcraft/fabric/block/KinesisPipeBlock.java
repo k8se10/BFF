@@ -12,14 +12,12 @@ import org.jetbrains.annotations.Nullable;
 
 public class KinesisPipeBlock extends BlockWithEntity {
     public KinesisPipeBlock() { super(Settings.create().nonOpaque().strength(0.5f)); }
-
-    @Override
-    public BlockEntity createBlockEntity(BlockPos pos, BlockState state) {
+@Override
+public BlockEntity createBlockEntity(BlockPos pos, BlockState state) {
         return new KinesisPipeEntity(pos, state);
     }
-
-    @Override
-    public <T extends BlockEntity> BlockEntityTicker<T> getTicker(World world, BlockState state, BlockEntityType<T> type) {
+@Override
+public <T extends BlockEntity> BlockEntityTicker<T> getTicker(World world, BlockState state, BlockEntityType<T> type) {
         return world.isClient ? null : (w,p,s,be) -> {
             if (be instanceof KinesisPipeEntity k) k.serverTick();
         };

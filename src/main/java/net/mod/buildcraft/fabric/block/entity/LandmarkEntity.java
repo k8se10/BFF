@@ -69,9 +69,8 @@ public class LandmarkEntity extends BlockEntity {
 
     public BlockPos getAreaMin(){ return areaMin; }
     public BlockPos getAreaMax(){ return areaMax; }
-
-    @Override
-    public void writeNbt(NbtCompound nbt){
+@Override
+public void writeNbt(NbtCompound nbt){
         super.writeNbt(nbt);
         if (areaMin != null){
             nbt.putInt("minX", areaMin.getX());
@@ -84,9 +83,8 @@ public class LandmarkEntity extends BlockEntity {
             nbt.putInt("maxZ", areaMax.getZ());
         }
     }
-
-    @Override
-    public void readNbt(NbtCompound nbt){
+@Override
+public void readNbt(NbtCompound nbt){
         super.readNbt(nbt);
         if (nbt.contains("minX")){
             areaMin = new BlockPos(nbt.getInt("minX"), nbt.getInt("minY"), nbt.getInt("minZ"));

@@ -22,8 +22,8 @@ import net.mod.buildcraft.fabric.block.entity.PipeBlockEntity;
 import org.jetbrains.annotations.Nullable;
 
 public class PipeBlock extends BlockWithEntity {
-    @Override
-    public BlockState getStateForNeighborUpdate(BlockState state, net.minecraft.util.math.Direction direction, BlockState neighborState, net.minecraft.world.WorldAccess world, BlockPos pos, BlockPos neighborPos) {
+@Override
+public BlockState getStateForNeighborUpdate(BlockState state, net.minecraft.util.math.Direction direction, BlockState neighborState, net.minecraft.world.WorldAccess world, BlockPos pos, BlockPos neighborPos) {
         boolean connect = neighborState.getBlock() instanceof PipeBlock || world.getBlockEntity(neighborPos) != null;
         return state.with(switch(direction){
             case NORTH -> NORTH;
@@ -34,8 +34,8 @@ public class PipeBlock extends BlockWithEntity {
             case DOWN -> DOWN;
         }, connect);
     }
-    @Override
-    public void onBlockAdded(BlockState state, net.minecraft.world.World world, BlockPos pos, BlockState oldState, boolean notify) {
+@Override
+public void onBlockAdded(BlockState state, net.minecraft.world.World world, BlockPos pos, BlockState oldState, boolean notify) {
         for (var d : net.minecraft.util.math.Direction.values()) {
             BlockPos n = pos.offset(d);
             BlockState ns = world.getBlockState(n);
@@ -63,40 +63,35 @@ public class PipeBlock extends BlockWithEntity {
     protected void appendProperties(StateManager.Builder<net.minecraft.block.Block, BlockState> builder) {
         builder.add(NORTH, SOUTH, EAST, WEST, UP, DOWN);
     }
-
-    @Override
-    public BlockState getPlacementState(ItemPlacementContext ctx) {
+@Override
+public BlockState getPlacementState(ItemPlacementContext ctx) {
         return getDefaultState(); // Real impl should detect neighbors
     }
-
-    @Override
-    public VoxelShape getOutlineShape(BlockState state, BlockView world, BlockPos pos, ShapeContext ctx) {
+@Override
+public VoxelShape getOutlineShape(BlockState state, BlockView world, BlockPos pos, ShapeContext ctx) {
         return CORE;
     }
-
-    @Override
-    public BlockEntity createBlockEntity(BlockPos pos, BlockState state) {
+@Override
+public BlockEntity createBlockEntity(BlockPos pos, BlockState state) {
         return new PipeBlockEntity(pos, state);
     }
 
     @Nullable
-    @Override
-    public <T extends BlockEntity> BlockEntityTicker<T> getTicker(World world, BlockState state, BlockEntityType<T> type) {
+@Override
+public <T extends BlockEntity> BlockEntityTicker<T> getTicker(World world, BlockState state, BlockEntityType<T> type) {
         return world.isClient ? (w, p, s, be) -> { if (be instanceof PipeBlockEntity pipe) pipe.clientTick(); } : (w, p, s, be) -> {
             if (be instanceof PipeBlockEntity pipe) {
                 pipe.serverTick();
             }
         };
     }
-
-    @Override
-    public ActionResult onUse(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockHitResult hit) {
+@Override
+public ActionResult onUse(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockHitResult hit) {
         return ActionResult.SUCCESS;
     }
 }
-
-    @Override
-    public net.minecraft.util.ActionResult onUse(net.minecraft.block.BlockState state, net.minecraft.world.World world, net.minecraft.util.math.BlockPos pos, net.minecraft.entity.player.PlayerEntity player, net.minecraft.util.Hand hand, net.minecraft.util.hit.BlockHitResult hit){
+@Override
+public net.minecraft.util.ActionResult onUse(net.minecraft.block.BlockState state, net.minecraft.world.World world, net.minecraft.util.math.BlockPos pos, net.minecraft.entity.player.PlayerEntity player, net.minecraft.util.Hand hand, net.minecraft.util.hit.BlockHitResult hit){
         if(world.isClient) return net.minecraft.util.ActionResult.SUCCESS;
         var be = world.getBlockEntity(pos);
         if(!(be instanceof net.mod.buildcraft.fabric.block.entity.PipeBlockEntity pipe)) return net.minecraft.util.ActionResult.PASS;
@@ -119,8 +114,8 @@ public class PipeBlock extends BlockWithEntity {
 
 
     // Facade UX v2
-    @Override
-    public net.minecraft.util.ActionResult onUse(net.minecraft.block.BlockState state, net.minecraft.world.World world, net.minecraft.util.math.BlockPos pos, net.minecraft.entity.player.PlayerEntity player, net.minecraft.util.Hand hand, net.minecraft.util.hit.BlockHitResult hit){
+@Override
+public net.minecraft.util.ActionResult onUse(net.minecraft.block.BlockState state, net.minecraft.world.World world, net.minecraft.util.math.BlockPos pos, net.minecraft.entity.player.PlayerEntity player, net.minecraft.util.Hand hand, net.minecraft.util.hit.BlockHitResult hit){
         var stack = player.getStackInHand(hand);
         if(world.isClient) return net.minecraft.util.ActionResult.SUCCESS;
         var be = world.getBlockEntity(pos);

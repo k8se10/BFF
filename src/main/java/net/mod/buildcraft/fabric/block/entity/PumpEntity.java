@@ -15,12 +15,12 @@ import net.mod.buildcraft.fabric.energy.MjReceiver;
 import net.mod.buildcraft.fabric.energy.SimpleMjStorage;
 import net.mod.buildcraft.fabric.registry.BCContent;
 
-public class PumpEntity extends BlockEntity implements MjReceiver {
-    private final SimpleMjStorage buffer = new SimpleMjStorage(1_000_000); // 1 MJ
+public class PumpEntity extends BlockEntity implements MjReceiver {, private final SimpleMjStorage buffer = new SimpleMjStorage(1_000_000); // 1 MJ
     public PumpEntity(BlockPos pos, BlockState state) { super(BCContent.PUMP_BE, pos, state); }
-
-    @Override public long receiveMicroMJ(long amount){ return buffer.receiveMicroMJ(amount); }
-    @Override public boolean canReceiveMJ(){ return true; }
+@Override
+public long receiveMicroMJ(long amount){ return buffer.receiveMicroMJ(amount); }
+@Override
+public boolean canReceiveMJ(){ return true; }
 
     public void serverTick() {
         if (!(world instanceof ServerWorld sw)) return;

@@ -11,25 +11,31 @@ import net.mod.buildcraft.fabric.block.entity.RefineryEntity;
 
 import net.minecraft.util.ActionResult; import net.minecraft.util.Hand; import net.minecraft.util.hit.BlockHitResult; import net.minecraft.entity.player.PlayerEntity;
 public class RefineryBlock extends BlockWithEntity {
-    public RefineryBlock(){ super(Settings.create().strength(2.0f));     @Override public ActionResult onUse(BlockState s, net.minecraft.world.World w, BlockPos p, PlayerEntity pl, Hand h, BlockHitResult hit){ if(!w.isClient){ var be=w.getBlockEntity(p); if(be instanceof net.mod.buildcraft.fabric.block.entity.RefineryEntity) pl.openHandledScreen((net.minecraft.screen.NamedScreenHandlerFactory)be);} return ActionResult.SUCCESS; }
+    public RefineryBlock(){ super(Settings.create().strength(2.0f));     
 }
-
-    @Override public BlockEntity createBlockEntity(BlockPos pos, BlockState state){ return new RefineryEntity(pos, state);     @Override public ActionResult onUse(BlockState s, net.minecraft.world.World w, BlockPos p, PlayerEntity pl, Hand h, BlockHitResult hit){ if(!w.isClient){ var be=w.getBlockEntity(p); if(be instanceof net.mod.buildcraft.fabric.block.entity.RefineryEntity) pl.openHandledScreen((net.minecraft.screen.NamedScreenHandlerFactory)be);} return ActionResult.SUCCESS; }
+@Override
+public ActionResult onUse(BlockState s, net.minecraft.world.World w, BlockPos p, PlayerEntity pl, Hand h, BlockHitResult hit){ if(!w.isClient){ var be=w.getBlockEntity(p); if(be instanceof net.mod.buildcraft.fabric.block.entity.RefineryEntity) pl.openHandledScreen((net.minecraft.screen.NamedScreenHandlerFactory)be);} return ActionResult.SUCCESS; }
 }
-
-    @Override public <T extends BlockEntity> BlockEntityTicker<T> getTicker(World w, BlockState s, BlockEntityType<T> t){
-        return w.isClient ? null : (wr, p, st, be) -> { if (be instanceof RefineryEntity r) r.serverTick();     @Override public ActionResult onUse(BlockState s, net.minecraft.world.World w, BlockPos p, PlayerEntity pl, Hand h, BlockHitResult hit){ if(!w.isClient){ var be=w.getBlockEntity(p); if(be instanceof net.mod.buildcraft.fabric.block.entity.RefineryEntity) pl.openHandledScreen((net.minecraft.screen.NamedScreenHandlerFactory)be);} return ActionResult.SUCCESS; }
+@Override
+public BlockEntity createBlockEntity(BlockPos pos, BlockState state){ return new RefineryEntity(pos, state);
+@Override
+public ActionResult onUse(BlockState s, net.minecraft.world.World w, BlockPos p, PlayerEntity pl, Hand h, BlockHitResult hit){ if(!w.isClient){ var be=w.getBlockEntity(p); if(be instanceof net.mod.buildcraft.fabric.block.entity.RefineryEntity) pl.openHandledScreen((net.minecraft.screen.NamedScreenHandlerFactory)be);} return ActionResult.SUCCESS; }
+}
+@Override
+public <T extends BlockEntity> BlockEntityTicker<T> getTicker(World w, BlockState s, BlockEntityType<T> t){
+        return w.isClient ? null : (wr, p, st, be) -> { if (be instanceof RefineryEntity r) r.serverTick();
+@Override
+public ActionResult onUse(BlockState s, net.minecraft.world.World w, BlockPos p, PlayerEntity pl, Hand h, BlockHitResult hit){ if(!w.isClient){ var be=w.getBlockEntity(p); if(be instanceof net.mod.buildcraft.fabric.block.entity.RefineryEntity) pl.openHandledScreen((net.minecraft.screen.NamedScreenHandlerFactory)be);} return ActionResult.SUCCESS; }
 }
 ;
-        @Override public ActionResult onUse(BlockState s, net.minecraft.world.World w, BlockPos p, PlayerEntity pl, Hand h, BlockHitResult hit){ if(!w.isClient){ var be=w.getBlockEntity(p); if(be instanceof net.mod.buildcraft.fabric.block.entity.RefineryEntity) pl.openHandledScreen((net.minecraft.screen.NamedScreenHandlerFactory)be);} return ActionResult.SUCCESS; }
+@Override
+public ActionResult onUse(BlockState s, net.minecraft.world.World w, BlockPos p, PlayerEntity pl, Hand h, BlockHitResult hit){ if(!w.isClient){ var be=w.getBlockEntity(p); if(be instanceof net.mod.buildcraft.fabric.block.entity.RefineryEntity) pl.openHandledScreen((net.minecraft.screen.NamedScreenHandlerFactory)be);} return ActionResult.SUCCESS; }
 }
-
-    @Override public ActionResult onUse(BlockState s, net.minecraft.world.World w, BlockPos p, PlayerEntity pl, Hand h, BlockHitResult hit){ if(!w.isClient){ var be=w.getBlockEntity(p); if(be instanceof net.mod.buildcraft.fabric.block.entity.RefineryEntity) pl.openHandledScreen((net.minecraft.screen.NamedScreenHandlerFactory)be);} return ActionResult.SUCCESS; }
+@Override
+public ActionResult onUse(BlockState s, net.minecraft.world.World w, BlockPos p, PlayerEntity pl, Hand h, BlockHitResult hit){ if(!w.isClient){ var be=w.getBlockEntity(p); if(be instanceof net.mod.buildcraft.fabric.block.entity.RefineryEntity) pl.openHandledScreen((net.minecraft.screen.NamedScreenHandlerFactory)be);} return ActionResult.SUCCESS; }
 }
-
-
-    @Override
-    public net.minecraft.util.ActionResult onUse(net.minecraft.block.BlockState state, net.minecraft.world.World world, net.minecraft.util.math.BlockPos pos, net.minecraft.entity.player.PlayerEntity player, net.minecraft.util.Hand hand, net.minecraft.util.hit.BlockHitResult hit){
+@Override
+public net.minecraft.util.ActionResult onUse(net.minecraft.block.BlockState state, net.minecraft.world.World world, net.minecraft.util.math.BlockPos pos, net.minecraft.entity.player.PlayerEntity player, net.minecraft.util.Hand hand, net.minecraft.util.hit.BlockHitResult hit){
         var stack = player.getStackInHand(hand);
         if(stack.getItem().toString().toLowerCase().contains("wrench")){
             if(!world.isClient){

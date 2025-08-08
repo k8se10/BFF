@@ -18,8 +18,7 @@ import net.minecraft.text.Text;
 import net.mod.buildcraft.fabric.config.BCConfig;
 import net.mod.buildcraft.fabric.block.entity.LandmarkEntity;
 
-public class QuarryEntity extends BlockEntity implements net.minecraft.screen.NamedScreenHandlerFactory, net.mod.buildcraft.fabric.energy.MjReceiver {
-    public void cycleSize(){
+public class QuarryEntity extends BlockEntity implements net.minecraft.screen.NamedScreenHandlerFactory, net.mod.buildcraft.fabric.energy.MjReceiver {, public void cycleSize(){
         if (!initialized) return;
         if (world == null || world.isClient) return;
         int next = size + 2; // grow by 2 to keep odd sizes
@@ -39,9 +38,10 @@ public class QuarryEntity extends BlockEntity implements net.minecraft.screen.Na
     private int tick;
 
     public QuarryEntity(BlockPos pos, BlockState state) { super(BCContent.QUARRY_BE, pos, state); }
-
-    @Override public long receiveMicroMJ(long amount){ return buffer.receiveMicroMJ(amount); }
-    @Override public boolean canReceiveMJ(){ return true; }
+@Override
+public long receiveMicroMJ(long amount){ return buffer.receiveMicroMJ(amount); }
+@Override
+public boolean canReceiveMJ(){ return true; }
 
     private void init(ServerWorld sw){
         // Try to read landmarks in range; if any have an area set, use bbox intersection
@@ -78,14 +78,12 @@ public class QuarryEntity extends BlockEntity implements net.minecraft.screen.Na
         y = pos.getY() - 1;
         initialized = true;
     }
-
-    
-    @Override
-    public net.minecraft.text.Text getDisplayName() {
+@Override
+public net.minecraft.text.Text getDisplayName() {
         return net.minecraft.text.Text.literal("Quarry");
     }
-    @Override
-    public net.minecraft.screen.ScreenHandler createMenu(int syncId, net.minecraft.entity.player.PlayerInventory inv, net.minecraft.entity.player.PlayerEntity player) {
+@Override
+public net.minecraft.screen.ScreenHandler createMenu(int syncId, net.minecraft.entity.player.PlayerInventory inv, net.minecraft.entity.player.PlayerEntity player) {
         return new net.mod.buildcraft.fabric.screen.QuarryScreenHandler(syncId, inv);
     }
     
@@ -127,10 +125,14 @@ public class QuarryEntity extends BlockEntity implements net.minecraft.screen.Na
     public int getMinX(){ return minX; } public int getMaxX(){ return maxX; }
     public int getMinZ(){ return minZ; } public int getMaxZ(){ return maxZ; }
     private void sync(){ if (world != null && !world.isClient) world.updateListeners(pos, getCachedState(), getCachedState(), 3); }
-    @Override public Packet<ClientPlayPacketListener> toUpdatePacket(){ return BlockEntityUpdateS2CPacket.create(this); }
-    @Override public NbtCompound toInitialChunkDataNbt(){ NbtCompound t = new NbtCompound(); writeNbt(t); return t; }
-    @Override public void writeNbt(NbtCompound n){ super.writeNbt(n); n.putInt("minX",minX); n.putInt("maxX",maxX); n.putInt("minZ",minZ); n.putInt("maxZ",maxZ); }
-    @Override public void readNbt(NbtCompound n){ super.readNbt(n); if (n.contains("minX")){ minX=n.getInt("minX"); maxX=n.getInt("maxX"); minZ=n.getInt("minZ"); maxZ=n.getInt("maxZ"); } }
+@Override
+public Packet<ClientPlayPacketListener> toUpdatePacket(){ return BlockEntityUpdateS2CPacket.create(this); }
+@Override
+public NbtCompound toInitialChunkDataNbt(){ NbtCompound t = new NbtCompound(); writeNbt(t); return t; }
+@Override
+public void writeNbt(NbtCompound n){ super.writeNbt(n); n.putInt("minX",minX); n.putInt("maxX",maxX); n.putInt("minZ",minZ); n.putInt("maxZ",maxZ); }
+@Override
+public void readNbt(NbtCompound n){ super.readNbt(n); if (n.contains("minX")){ minX=n.getInt("minX"); maxX=n.getInt("maxX"); minZ=n.getInt("minZ"); maxZ=n.getInt("maxZ"); } }
     
     public int[] getCursorXZ(){ return new int[]{pos.getX()+x, pos.getZ()+z}; }
 

@@ -9,8 +9,10 @@ import net.minecraft.world.World;
 import net.mod.buildcraft.fabric.block.entity.VoidPipeEntity;
 
 public class VoidPipeBlock extends PipeBlock {
-    @Override public BlockEntity createBlockEntity(BlockPos pos, BlockState state){ return new VoidPipeEntity(pos, state); }
-    @Override public <T extends BlockEntity> BlockEntityTicker<T> getTicker(World world, BlockState state, BlockEntityType<T> type) {
+@Override
+public BlockEntity createBlockEntity(BlockPos pos, BlockState state){ return new VoidPipeEntity(pos, state); }
+@Override
+public <T extends BlockEntity> BlockEntityTicker<T> getTicker(World world, BlockState state, BlockEntityType<T> type) {
         return null;
     }
 }

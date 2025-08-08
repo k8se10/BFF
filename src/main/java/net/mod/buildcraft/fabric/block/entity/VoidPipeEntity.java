@@ -9,5 +9,6 @@ import net.mod.buildcraft.fabric.registry.BCContent;
 
 public class VoidPipeEntity extends PipeBlockEntity {
     public VoidPipeEntity(BlockPos pos, BlockState state){ super(pos, state); }
-    @Override public boolean tryAccept(ItemVariant variant, int amount, Direction from){ return true; } // items vanish
+@Override
+public boolean tryAccept(ItemVariant variant, int amount, Direction from){ return true; } // items vanish
 }

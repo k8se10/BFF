@@ -16,8 +16,7 @@ import net.mod.buildcraft.fabric.item.BlueprintItem;
 import net.mod.buildcraft.fabric.registry.BCContent;
 import net.mod.buildcraft.fabric.energy.SimpleMjStorage;
 
-public class BuilderEntity extends BlockEntity implements net.minecraft.screen.NamedScreenHandlerFactory, net.mod.buildcraft.fabric.energy.MjReceiver {
-    private ItemStack blueprint = ItemStack.EMPTY;
+public class BuilderEntity extends BlockEntity implements net.minecraft.screen.NamedScreenHandlerFactory, net.mod.buildcraft.fabric.energy.MjReceiver {, private ItemStack blueprint = ItemStack.EMPTY;
     private final SimpleMjStorage buffer = new SimpleMjStorage(5_000_000);
     private int ticks;
     private int cursorX = 0, cursorY = 0, cursorZ = 0;
@@ -90,16 +89,16 @@ public class BuilderEntity extends BlockEntity implements net.minecraft.screen.N
         }
         // Done
     }
-
-    @Override public void writeNbt(NbtCompound n){ super.writeNbt(n); if (!blueprint.isEmpty()) n.put("bp", blueprint.writeNbt(new NbtCompound())); n.putInt("cx",cursorX); n.putInt("cy",cursorY); n.putInt("cz",cursorZ); }
-    @Override public void readNbt(NbtCompound n){ super.readNbt(n); if (n.contains("bp")) blueprint = ItemStack.fromNbt(n.getCompound("bp")); cursorX=n.getInt("cx"); cursorY=n.getInt("cy"); cursorZ=n.getInt("cz"); }
-
-
-
-    @Override public long receiveMicroMJ(long amount){ return buffer.receiveMicroMJ(amount); }
-    @Override public boolean canReceiveMJ(){ return true; }
-
-
-    @Override public net.minecraft.text.Text getDisplayName(){ return net.minecraft.text.Text.literal("Builder"); }
-    @Override public net.minecraft.screen.ScreenHandler createMenu(int id, net.minecraft.entity.player.PlayerInventory inv, net.minecraft.entity.player.PlayerEntity p){ return new net.mod.buildcraft.fabric.screen.BuilderScreenHandler(id, inv); }
+@Override
+public void writeNbt(NbtCompound n){ super.writeNbt(n); if (!blueprint.isEmpty()) n.put("bp", blueprint.writeNbt(new NbtCompound())); n.putInt("cx",cursorX); n.putInt("cy",cursorY); n.putInt("cz",cursorZ); }
+@Override
+public void readNbt(NbtCompound n){ super.readNbt(n); if (n.contains("bp")) blueprint = ItemStack.fromNbt(n.getCompound("bp")); cursorX=n.getInt("cx"); cursorY=n.getInt("cy"); cursorZ=n.getInt("cz"); }
+@Override
+public long receiveMicroMJ(long amount){ return buffer.receiveMicroMJ(amount); }
+@Override
+public boolean canReceiveMJ(){ return true; }
+@Override
+public net.minecraft.text.Text getDisplayName(){ return net.minecraft.text.Text.literal("Builder"); }
+@Override
+public net.minecraft.screen.ScreenHandler createMenu(int id, net.minecraft.entity.player.PlayerInventory inv, net.minecraft.entity.player.PlayerEntity p){ return new net.mod.buildcraft.fabric.screen.BuilderScreenHandler(id, inv); }
 }

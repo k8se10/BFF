@@ -28,14 +28,12 @@ public class WoodenPipeBlock extends PipeBlock {
         super.appendProperties(builder);
         builder.add(FACING);
     }
-
-    @Override
-    public BlockState getPlacementState(ItemPlacementContext ctx) {
+@Override
+public BlockState getPlacementState(ItemPlacementContext ctx) {
         return getDefaultState().with(FACING, ctx.getPlayerLookDirection().getOpposite());
     }
-
-    @Override
-    public <T extends BlockEntity> BlockEntityTicker<T> getTicker(World world, BlockState state, BlockEntityType<T> type) {
+@Override
+public <T extends BlockEntity> BlockEntityTicker<T> getTicker(World world, BlockState state, BlockEntityType<T> type) {
         return world.isClient ? null : (w, p, s, be) -> {
             if (be instanceof PipeBlockEntity pipe) {
                 pipe.serverTick();

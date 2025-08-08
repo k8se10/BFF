@@ -16,9 +16,9 @@ import net.minecraft.entity.player.PlayerEntity;
 
 public class QuarryBlock extends BlockWithEntity {
     public QuarryBlock() { super(Settings.create().strength(3.0f)); }
-    @Override 
     @Override
-    public ActionResult onUse(BlockState state, net.minecraft.world.World world, BlockPos pos, PlayerEntity player, Hand hand, BlockHitResult hit) {
+@Override
+public ActionResult onUse(BlockState state, net.minecraft.world.World world, BlockPos pos, PlayerEntity player, Hand hand, BlockHitResult hit) {
         if (!world.isClient) {
             var be = world.getBlockEntity(pos);
             if (be instanceof net.mod.buildcraft.fabric.block.entity.QuarryEntity) {
@@ -30,13 +30,13 @@ public class QuarryBlock extends BlockWithEntity {
     }
 
     public BlockEntity createBlockEntity(BlockPos pos, BlockState state){ return new QuarryEntity(pos, state); }
-    @Override public <T extends BlockEntity> BlockEntityTicker<T> getTicker(World world, BlockState state, BlockEntityType<T> type){
+@Override
+public <T extends BlockEntity> BlockEntityTicker<T> getTicker(World world, BlockState state, BlockEntityType<T> type){
         return world.isClient ? null : (w,p,s,be) -> { if (be instanceof QuarryEntity q) q.serverTick(); };
     }
 }
-
-    @Override
-    public net.minecraft.util.ActionResult onUse(net.minecraft.block.BlockState state, net.minecraft.world.World world, net.minecraft.util.math.BlockPos pos, net.minecraft.entity.player.PlayerEntity player, net.minecraft.util.Hand hand, net.minecraft.util.hit.BlockHitResult hit){
+@Override
+public net.minecraft.util.ActionResult onUse(net.minecraft.block.BlockState state, net.minecraft.world.World world, net.minecraft.util.math.BlockPos pos, net.minecraft.entity.player.PlayerEntity player, net.minecraft.util.Hand hand, net.minecraft.util.hit.BlockHitResult hit){
         var stack = player.getStackInHand(hand);
         if(stack.getItem().toString().toLowerCase().contains("wrench")){
             if(!world.isClient){

@@ -15,17 +15,14 @@ import net.mod.buildcraft.fabric.registry.BCContent;
 import java.util.EnumMap;
 import java.util.Map;
 
-public class DiamondPipeEntity extends PipeBlockEntity implements net.minecraft.screen.NamedScreenHandlerFactory {
-    private final Map<Direction, ItemVariant> filter = new EnumMap<>(Direction.class);
+public class DiamondPipeEntity extends PipeBlockEntity implements net.minecraft.screen.NamedScreenHandlerFactory {, private final Map<Direction, ItemVariant> filter = new EnumMap<>(Direction.class);
 
     public DiamondPipeEntity(BlockPos pos, BlockState state){ super(pos, state); }
 
     private final net.minecraft.inventory.SimpleInventory filters = new net.minecraft.inventory.SimpleInventory(54); // 6 sides * 3
     public net.minecraft.inventory.SimpleInventory getFilters(){ return filters; }
-    
-
-    @Override
-    public boolean tryAccept(ItemVariant variant, int amount, Direction from){
+@Override
+public boolean tryAccept(ItemVariant variant, int amount, Direction from){
         // If there's a filter set on any side, try to push towards a matching adjacent inventory first.
         Direction preferred = null;
         for (var e : filter.entrySet()){
@@ -49,9 +46,8 @@ public class DiamondPipeEntity extends PipeBlockEntity implements net.minecraft.
     }
 
     public void setFilter(Direction side, ItemVariant v){ filter.put(side, v); markDirty(); if (world!=null) world.updateListeners(pos, getCachedState(), getCachedState(), 3); }
-
-    @Override
-    public void writeNbt(NbtCompound nbt){
+@Override
+public void writeNbt(NbtCompound nbt){
         net.minecraft.inventory.Inventories.writeNbt(nbt, filters.getHeldStacks());
         super.writeNbt(nbt);
         for (Direction d: Direction.values()){
@@ -61,8 +57,8 @@ public class DiamondPipeEntity extends PipeBlockEntity implements net.minecraft.
             }
         }
     }
-    @Override
-    public void readNbt(NbtCompound nbt){
+@Override
+public void readNbt(NbtCompound nbt){
         net.minecraft.inventory.Inventories.readNbt(nbt, filters.getHeldStacks());
         super.readNbt(nbt);
         for (Direction d: Direction.values()){
@@ -72,10 +68,10 @@ public class DiamondPipeEntity extends PipeBlockEntity implements net.minecraft.
             }
         }
     }
-
-
-    @Override public net.minecraft.text.Text getDisplayName(){ return net.minecraft.text.Text.literal("Diamond Pipe"); }
-    @Override public net.minecraft.screen.ScreenHandler createMenu(int syncId, net.minecraft.entity.player.PlayerInventory inv, net.minecraft.entity.player.PlayerEntity player){
+@Override
+public net.minecraft.text.Text getDisplayName(){ return net.minecraft.text.Text.literal("Diamond Pipe"); }
+@Override
+public net.minecraft.screen.ScreenHandler createMenu(int syncId, net.minecraft.entity.player.PlayerInventory inv, net.minecraft.entity.player.PlayerEntity player){
         return new net.mod.buildcraft.fabric.screen.DiamondPipeScreenHandler(syncId, inv, this);
     }
     

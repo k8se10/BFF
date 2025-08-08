@@ -25,8 +25,7 @@ import net.fabricmc.fabric.api.transfer.v1.transaction.Transaction;
 import net.mod.buildcraft.fabric.fluid.BCFluids;
 import net.mod.buildcraft.fabric.config.BCConfig;
 
-public class CombustionEngineEntity extends BlockEntity implements net.minecraft.screen.NamedScreenHandlerFactory  MjProvider, MjReceiver {
-    private final SimpleMjStorage buffer = new SimpleMjStorage(10_000_000);
+public class CombustionEngineEntity extends BlockEntity implements net.minecraft.screen.NamedScreenHandlerFactory, MjProvider, MjReceiver {, private final SimpleMjStorage buffer = new SimpleMjStorage(10_000_000);
     private int heat = 0;
     private long fuelMb = 0; // in mB
     private long coolantMb = 0; // in mB
@@ -77,15 +76,19 @@ public class CombustionEngineEntity extends BlockEntity implements net.minecraft
             }
         }
     }
-
-    @Override public long extractMicroMJ(long max){ return buffer.extractMicroMJ(max); }
-    @Override public boolean canProvideMJ(){ return buffer.getStoredMicroMJ()>0; }
-    @Override public long receiveMicroMJ(long amount){ return buffer.receiveMicroMJ(amount); }
-    @Override public boolean canReceiveMJ(){ return true; }
+@Override
+public long extractMicroMJ(long max){ return buffer.extractMicroMJ(max); }
+@Override
+public boolean canProvideMJ(){ return buffer.getStoredMicroMJ()>0; }
+@Override
+public long receiveMicroMJ(long amount){ return buffer.receiveMicroMJ(amount); }
+@Override
+public boolean canReceiveMJ(){ return true; }
 }
-
-    @Override public net.minecraft.text.Text getDisplayName(){ return net.minecraft.text.Text.literal("Combustion Engine"); }
-    @Override public net.minecraft.screen.ScreenHandler createMenu(int id, net.minecraft.entity.player.PlayerInventory inv, net.minecraft.entity.player.PlayerEntity p){ return new net.mod.buildcraft.fabric.screen.CombustionEngineScreenHandler(id, inv); }
+@Override
+public net.minecraft.text.Text getDisplayName(){ return net.minecraft.text.Text.literal("Combustion Engine"); }
+@Override
+public net.minecraft.screen.ScreenHandler createMenu(int id, net.minecraft.entity.player.PlayerInventory inv, net.minecraft.entity.player.PlayerEntity p){ return new net.mod.buildcraft.fabric.screen.CombustionEngineScreenHandler(id, inv); }
 
 
     public int getHeat() { return heat; }
