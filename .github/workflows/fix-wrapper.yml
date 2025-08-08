@@ -1,0 +1,50 @@
+name: Fix Gradle Wrapper
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  repair:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Download official Gradle 8.7 distribution
+        shell: bash
+        run: |
+          set -euo pipefail
+          curl -L --fail -o gradle-8.7-bin.zip https://services.gradle.org/distributions/gradle-8.7-bin.zip
+          unzip -l gradle-8.7-bin.zip | grep -E 'gradle-wrapper-.*\.jar'
+
+      - name: Install wrapper jar from distribution
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p gradle/wrapper
+          WRAP_PATH=$(unzip -Z1 gradle-8.7-bin.zip | grep -E 'lib/plugins/gradle-wrapper-.*\.jar' | head -n1)
+          unzip -p gradle-8.7-bin.zip "$WRAP_PATH" > gradle/wrapper/gradle-wrapper.jar
+          # normalize gradlew line endings + exec bit (if present)
+          if [ -f gradlew ]; then
+            awk 'sub("\r$","")' gradlew > gradlew.nix && mv gradlew.nix gradlew
+            chmod +x gradlew
+          fi
+
+      - name: Update gradle-wrapper.properties distributionUrl
+        shell: bash
+        run: |
+          set -euo pipefail
+          PROP=gradle/wrapper/gradle-wrapper.properties
+          mkdir -p gradle/wrapper
+          if [ ! -f "$PROP" ]; then
+            cat > "$PROP" <<'PROPS'
+distributionBase=GRADLE_USER_HOME
+distributionPath=wrapper/dists
+distributionUrl=https\://services.gradle.org/distributions/gradle-8.7-bin.zip
+zipStoreBase=GRADLE_USER_HOME
+zipSt
