@@ -6,4 +6,16 @@ pluginManagement {
   }
 }
 
+dependencyResolutionManagement {
+  repositoriesMode.set(RepositoriesMode.PREFER_PROJECT)
+  repositories {
+    maven { url = 'https://maven.fabricmc.net/' }
+    mavenCentral()
+    // These are commonly used by Fabric mods; safe to keep.
+    maven { url = 'https://maven.quiltmc.org/repository/release/' }
+    maven { url = 'https://maven.terraformersmc.com/releases/' }
+    maven { url = 'https://repo.spongepowered.org/repository/maven-public/' }
+  }
+}
+
 rootProject.name = "buildcraft-fabric"
