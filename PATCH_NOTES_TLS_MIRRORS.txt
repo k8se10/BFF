@@ -1,0 +1,11 @@
+Applied TLS/repository resilience patch for mixinextras resolution.
+
+Changes:
+- Updated settings.gradle
+Updated build.gradle repositories
+Updated gradle.properties
+Created .github/workflows/ci.yml
+- Added mirrors: ladysnake, quilt, terraformers, sponge.
+- Forced IPv4 and TLS1.2/1.3 via gradle.properties and workflow env.
+
+If resolution still fails intermittently, re-run the job; caching sometimes holds a bad edge result.
