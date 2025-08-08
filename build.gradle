@@ -1,20 +1,17 @@
 plugins {
-  id 'fabric-loom' version '1.6.+'
+  id 'fabric-loom' version '1.6.+'          // Loom for 1.20.4
   id 'maven-publish'
 }
 
-group = project.findProperty('group') ?: 'net.mod.buildcraft'
-version = project.findProperty('version') ?: '0.1.0'
+group = findProperty('group') ?: 'net.mod.buildcraft'
+version = findProperty('version') ?: '0.1.0'
 
 java {
-  toolchain {
-    languageVersion = JavaLanguageVersion.of(project.findProperty('java_version') ?: '17')
-  }
+  toolchain { languageVersion = JavaLanguageVersion.of(findProperty('java_version') ?: '17') }
   withSourcesJar()
 }
 
 repositories {
-  // PREFER_PROJECT in settings makes these win over global settings
   maven { url = 'https://maven.fabricmc.net/' }
   mavenCentral()
   maven { url = 'https://maven.quiltmc.org/repository/release/' }
@@ -23,24 +20,22 @@ repositories {
 }
 
 dependencies {
-  minecraft "com.mojang:minecraft:${minecraft_version}"
-  mappings "net.fabricmc:yarn:${yarn_mappings}:v2"
+  def mc = findProperty('minecraft_version')
+  def yarn = findProperty('yarn_mappings')
+  def loader = findProperty('loader_version')
+  def fapi = findProperty('fabric_api_version')
 
-  modImplementation "net.fabricmc:fabric-loader:${loader_version}"
-  modImplementation "net.fabricmc.fabric-api:fabric-api:${fabric_api_version}"
+  minecraft "com.mojang:minecraft:${mc}"
+  mappings "net.fabricmc:yarn:${yarn}:v2"
+  modImplementation "net.fabricmc:fabric-loader:${loader}"
+  modImplementation "net.fabricmc.fabric-api:fabric-api:${fapi}"
 
-  // If you use annotations:
   compileOnly annotationProcessor("com.google.code.findbugs:jsr305:3.0.2")
 }
 
 tasks.withType(JavaCompile).configureEach {
   options.encoding = 'UTF-8'
   options.release = 17
-}
-
-loom {
-  // add loom config here if you use access wideners, split env sources, etc.
-  // e.g.: accessWidenerPath = file("src/main/resources/yourmod.accesswidener")
 }
 
 jar {
@@ -58,14 +53,11 @@ publishing {
   publications {
     mavenJava(MavenPublication) {
       from components.java
-      artifact(remapJar) // loom adds remapJar
+      artifact(remapJar)
       artifact(sourcesJar)
       groupId = project.group
-      artifactId = (project.findProperty('archivesBaseName') ?: 'buildcraft-fabric')
+      artifactId = (findProperty('archivesBaseName') ?: 'buildcraft-fabric')
       version = project.version
     }
-  }
-  repositories {
-    // add your repo target if you publish
   }
 }
