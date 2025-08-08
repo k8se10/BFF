@@ -9,7 +9,7 @@ import net.mod.buildcraft.fabric.energy.MjReceiver;
 import net.mod.buildcraft.fabric.energy.SimpleMjStorage;
 import net.mod.buildcraft.fabric.registry.BCContent;
 
-public class RedstoneEngineEntity extends BlockEntity implements net.minecraft.screen.NamedScreenHandlerFactory  MjProvider, MjReceiver {
+public class RedstoneEngineEntity extends BlockEntity implements net.minecraft.screen.NamedScreenHandlerFactory, MjProvider, MjReceiver {
     private final SimpleMjStorage buffer = new SimpleMjStorage(500_000); // 0.5 MJ buffer
 
     public RedstoneEngineEntity(BlockPos pos, BlockState state) { super(BCContent.REDSTONE_ENGINE_BE, pos, state); }

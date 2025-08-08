@@ -66,8 +66,7 @@ public class KinesisPipeEntity extends BlockEntity {
         }
         return null;
     }
-}
-
+    // --- energy loss & tick ---
     private float lineLoss = (float)net.mod.buildcraft.fabric.config.BCConfig.KINESIS_LINE_LOSS; // 1% per tick in pipe
     @Override public void serverTick(){
         super.serverTick();
@@ -75,3 +74,4 @@ public class KinesisPipeEntity extends BlockEntity {
             buffer.extractMicroMJ((long)(buffer.getStoredMicroMJ()*lineLoss));
         }
     }
+}

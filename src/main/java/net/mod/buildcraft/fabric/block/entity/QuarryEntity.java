@@ -18,7 +18,7 @@ import net.minecraft.text.Text;
 import net.mod.buildcraft.fabric.config.BCConfig;
 import net.mod.buildcraft.fabric.block.entity.LandmarkEntity;
 
-public class QuarryEntity extends BlockEntity implements net.minecraft.screen.NamedScreenHandlerFactory, MjReceiver {public class RefineryEntity extends BlockEntity
+public class QuarryEntity extends BlockEntity implements net.minecraft.screen.NamedScreenHandlerFactory, net.mod.buildcraft.fabric.energy.MjReceiver {public class RefineryEntity extends BlockEntity
         implements net.minecraft.screen.NamedScreenHandlerFactory, MjReceiver {
     public void cycleSize(){
         if (!initialized) return;

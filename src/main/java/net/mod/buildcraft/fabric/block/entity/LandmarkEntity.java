@@ -52,10 +52,13 @@ public class LandmarkEntity extends BlockEntity {
                 if (dx==0 && dz==0) continue;
                 m.set(pos.getX()+dx, pos.getY(), pos.getZ()+dz);
                 var be = sw.getBlockEntity(m);
-                if (be instanceof LandmarkEntity lm && lm != this){
-                    if (a == null) a = m.toImmutable();
-}
-                    else if (b == null) { b = m.toImmutable(); break; }
+                if (be instanceof LandmarkEntity lm && lm != this) {
+                    if (a == null) {
+                        a = m.toImmutable();
+                    } else if (b == null) {
+                        b = m.toImmutable();
+                        break;
+                    }
                 }
             }
             if (a != null && b != null) break;

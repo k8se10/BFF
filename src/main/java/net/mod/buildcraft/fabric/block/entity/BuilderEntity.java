@@ -16,7 +16,7 @@ import net.mod.buildcraft.fabric.item.BlueprintItem;
 import net.mod.buildcraft.fabric.registry.BCContent;
 import net.mod.buildcraft.fabric.energy.SimpleMjStorage;
 
-public class BuilderEntity extends BlockEntity implements net.minecraft.screen.NamedScreenHandlerFactory  net.mod.buildcraft.fabric.energy.MjReceiver {
+public class BuilderEntity extends BlockEntity implements net.minecraft.screen.NamedScreenHandlerFactory, net.mod.buildcraft.fabric.energy.MjReceiver {
     private ItemStack blueprint = ItemStack.EMPTY;
     private final SimpleMjStorage buffer = new SimpleMjStorage(5_000_000);
     private int ticks;
