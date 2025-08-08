@@ -15,7 +15,7 @@ import net.mod.buildcraft.fabric.energy.MjReceiver;
 import net.mod.buildcraft.fabric.energy.SimpleMjStorage;
 import net.mod.buildcraft.fabric.registry.BCContent;
 
-public class AssemblyTableEntity extends BlockEntity implements net.minecraft.screen.NamedScreenHandlerFactory implements MjReceiver {
+public class AssemblyTableEntity extends BlockEntity implements net.minecraft.screen.NamedScreenHandlerFactory  MjReceiver {
     private final SimpleMjStorage buffer = new SimpleMjStorage(20_000_000); // 20 MJ
     private int progress;
     private ItemStack output = ItemStack.EMPTY;

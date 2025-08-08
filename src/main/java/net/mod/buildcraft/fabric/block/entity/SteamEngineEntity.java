@@ -12,7 +12,7 @@ import net.mod.buildcraft.fabric.energy.SimpleMjStorage;
 import net.mod.buildcraft.fabric.registry.BCContent;
 import net.mod.buildcraft.fabric.config.BCConfig;
 
-public class SteamEngineEntity extends BlockEntity implements net.minecraft.screen.NamedScreenHandlerFactory implements MjProvider, MjReceiver {
+public class SteamEngineEntity extends BlockEntity implements net.minecraft.screen.NamedScreenHandlerFactory  MjProvider, MjReceiver {
     private final SimpleMjStorage buffer = new SimpleMjStorage(5_000_000);
     private int burnTime = 0;
 

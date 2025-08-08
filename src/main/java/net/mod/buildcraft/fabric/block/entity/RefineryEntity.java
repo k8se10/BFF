@@ -14,7 +14,9 @@ import net.mod.buildcraft.fabric.energy.SimpleMjStorage;
 import net.mod.buildcraft.fabric.fluid.BCFluids;
 import net.mod.buildcraft.fabric.registry.BCContent;
 
-public class RefineryEntity extends BlockEntity implements net.minecraft.screen.NamedScreenHandlerFactory implements MjReceiver {
+public class RefineryEntity extends BlockEntity implements net.minecraft.screen.NamedScreenHandlerFactory, MjReceiver {public class RefineryEntity extends BlockEntity
+        implements net.minecraft.screen.NamedScreenHandlerFactory, MjReceiver {
+
     private final SimpleMjStorage buffer = new SimpleMjStorage(5_000_000); // 5 MJ
 
     public RefineryEntity(BlockPos pos, BlockState state){ super(BCContent.REFINERY_BE, pos, state); }
@@ -62,3 +64,4 @@ public class RefineryEntity extends BlockEntity implements net.minecraft.screen.
     public long getCapacity() { return FluidConstants.BUCKET * 4; } // 4 bucket capacity per tank
 
     public boolean isActiveClient(){ return buffer.getStoredMicroMJ() > 0; }
+}

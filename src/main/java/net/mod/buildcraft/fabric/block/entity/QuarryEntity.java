@@ -18,7 +18,8 @@ import net.minecraft.text.Text;
 import net.mod.buildcraft.fabric.config.BCConfig;
 import net.mod.buildcraft.fabric.block.entity.LandmarkEntity;
 
-public class QuarryEntity extends BlockEntity implements net.minecraft.screen.NamedScreenHandlerFactory implements MjReceiver {
+public class QuarryEntity extends BlockEntity implements net.minecraft.screen.NamedScreenHandlerFactory, MjReceiver {public class RefineryEntity extends BlockEntity
+        implements net.minecraft.screen.NamedScreenHandlerFactory, MjReceiver {
     public void cycleSize(){
         if (!initialized) return;
         if (world == null || world.isClient) return;
@@ -162,3 +163,4 @@ public void tick() { if (running) spawnParticles(); }
     private long costPerBlock(){
         return (long)((long)(net.mod.buildcraft.fabric.config.BCConfig.QUARRY_COST_MJ * 1_000_000L) * Math.max(1, sizeMJ)); // 0.2 MJ scaled
     }
+}

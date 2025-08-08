@@ -37,8 +37,11 @@ public class LoopingAudioManager {
                     if (be == null) continue;
                     Identifier snd = null;
                     if (be instanceof CombustionEngineEntity ce && ce.isRunningClient()) snd = BCSounds.ENGINE_CHUG.getId();
+}
                     else if (be instanceof SteamEngineEntity se && se.isRunningClient()) snd = BCSounds.ENGINE_CHUG.getId();
+}
                     else if (be instanceof RefineryEntity re && re.isActiveClient()) snd = BCSounds.REFINERY_HUM.getId();
+}
                     else if (be instanceof QuarryEntity qe && qe.isActive()) snd = BCSounds.ENGINE_CHUG.getId(); // reuse chug for quarry
 
                     long key = m.asLong();
