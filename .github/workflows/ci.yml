@@ -2,16 +2,15 @@ name: BuildCraft Fabric CI
 
 on:
   push:
+    branches: ["**"]
   pull_request:
   workflow_dispatch:
-
-concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: true
 
 jobs:
   build:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
 
     steps:
       - name: Checkout
@@ -24,111 +23,47 @@ jobs:
         uses: actions/setup-java@v4
         with:
           distribution: temurin
-          java-version: 17
+          java-version: '17'
 
-      - name: Gradle cache
+      - name: Cache Gradle
         uses: actions/cache@v4
         with:
           path: |
             ~/.gradle/caches
             ~/.gradle/wrapper
             .gradle
-          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*','**/gradle-wrapper.properties','**/settings.gradle','gradle.properties') }}
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties', 'settings.gradle', 'gradle.properties') }}
           restore-keys: ${{ runner.os }}-gradle-
 
-      - name: Normalize gradlew + chmod
+      - name: Prepare gradlew
         shell: bash
         run: |
           if [ -f gradlew ]; then
-            awk 'sub("\r$","")' gradlew > gradlew.nix && mv gradlew.nix gradlew
+            sed -i 's/\r$//' gradlew
             chmod +x gradlew
+            # Clear wrapper JVM opts if your wrapper had bad "-Xmx" defaults
+            if grep -q '^DEFAULT_JVM_OPTS=' gradlew; then
+              sed -i 's/^DEFAULT_JVM_OPTS=.*/DEFAULT_JVM_OPTS=""/' gradlew
+            fi
           fi
-
-      - name: Clear DEFAULT_JVM_OPTS in wrapper
-        shell: bash
-        run: |
-          python3 - << 'PY'
-import re, pathlib
-p=pathlib.Path('gradlew')
-if p.exists():
-    s=p.read_text(encoding='utf-8')
-    s=re.sub(r'^DEFAULT_JVM_OPTS=.*$', 'DEFAULT_JVM_OPTS=""', s, flags=re.M)
-    p.write_text(s, encoding='utf-8')
-PY
-          chmod +x gradlew
-
-      - name: Print tool versions
-        shell: bash
-        run: |
-          ./gradlew --version || true
-          java -version
-          echo "Runner: $(uname -a)"
 
       - name: Build (clean -> build -> remapJar)
         shell: bash
         env:
           JAVA_TOOL_OPTIONS: ""
-          JAVA_OPTS: ""
           GRADLE_OPTS: "-Djava.net.preferIPv4Stack=true -Dhttps.protocols=TLSv1.2,TLSv1.3"
         run: |
-          set -euo pipefail
-          ./gradlew --refresh-dependencies clean build remapJar -S --stacktrace --no-daemon
+          ./gradlew --refresh-dependencies clean build remapJar -S --no-daemon
 
-      - name: Show built jars
+      - name: List jars
         shell: bash
         run: |
-          echo "Jars under build/libs:"
-          find . -type f -path "*/build/libs/*.jar" -print -exec ls -lh {} \;
+          echo "Built jars:"
+          find . -type f -path "*/build/libs/*.jar" -print | sort
 
-      - name: Resolve release jar
-        id: jar
-        shell: bash
-        run: |
-          set -euo pipefail
-          # Prefer non -dev/-sources jars
-          mapfile -t C < <(find . -type f -path "*/build/libs/*.jar" \
-            | grep -Ev '(-dev|-sources)\.jar$' \
-            | sort || true)
-
-          # Fallbacks commonly seen with Loom
-          if [ ${#C[@]} -eq 0 ]; then
-            mapfile -t C < <(find . -type f -path "*/build/libs/*-remapped.jar" | sort || true)
-          fi
-          if [ ${#C[@]} -eq 0 ]; then
-            mapfile -t C < <(find . -type f -path "*/build/libs/*fabric*.jar" | grep -Ev '(-dev|-sources)\.jar$' | sort || true)
-          fi
-
-          if [ ${#C[@]} -eq 0 ]; then
-            echo "No release jar found in */build/libs/*.jar"
-            echo "All jars for debugging:"; find . -type f -path "*/build/libs/*.jar" -print
-            exit 1
-          fi
-
-          echo "Found release jar: ${C[0]}"
-          echo "jar=${C[0]}" >> "$GITHUB_OUTPUT"
-
-      - name: Upload release jar
+      - name: Upload jars
         uses: actions/upload-artifact@v4
         with:
-          name: mod-build
-          path: ${{ steps.jar.outputs.jar }}
-          if-no-files-found: error
-
-      - name: Upload all jars (debug)
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: all-jars
+          name: buildcraft-fabric-jars
           path: "**/build/libs/*.jar"
-
-      - name: Upload diagnostics (logs, reports)
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: diagnostics
-          path: |
-            **/build/reports/**
-            gradle.properties
-            settings.gradle
-            build.gradle
-            gradle/wrapper/gradle-wrapper.properties
+          if-no-files-found: error
