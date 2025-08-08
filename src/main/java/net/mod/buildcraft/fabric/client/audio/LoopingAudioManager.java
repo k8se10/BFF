@@ -65,6 +65,6 @@ public class LoopingAudioManager {
                 e.getValue().stopLoop(); return true;
             }
             return false;
-        });
-    }
-}
+         );
+     
+ 

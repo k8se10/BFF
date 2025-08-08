@@ -15,7 +15,7 @@ import net.mod.buildcraft.fabric.registry.BCContent;
 import java.util.EnumMap;
 import java.util.Map;
 
-public class DiamondPipeEntity extends PipeBlockEntity implements net.minecraft.screen.NamedScreenHandlerFactory {, private final Map<Direction, ItemVariant> filter = new EnumMap<>(Direction.class);
+public class DiamondPipeEntity extends PipeBlockEntity implements net.minecraft.screen.NamedScreenHandlerFactory {private final Map<Direction, ItemVariant> filter = new EnumMap<>(Direction.class);
 
     public DiamondPipeEntity(BlockPos pos, BlockState state){ super(pos, state); }
 

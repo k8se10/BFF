@@ -18,13 +18,15 @@ public ActionResult onUse(BlockState s, net.minecraft.world.World w, BlockPos p,
 }
 @Override
 public BlockEntity createBlockEntity(BlockPos pos, BlockState state){ return new CombustionEngineEntity(pos, state);
-@Override
+
+    @Override
 public ActionResult onUse(BlockState s, net.minecraft.world.World w, BlockPos p, PlayerEntity pl, Hand h, BlockHitResult hit){ if(!w.isClient){ var be=w.getBlockEntity(p); if(be instanceof net.mod.buildcraft.fabric.block.entity.CombustionEngineEntity) pl.openHandledScreen((net.minecraft.screen.NamedScreenHandlerFactory)be);} return ActionResult.SUCCESS; }
 }
 @Override
 public <T extends BlockEntity> BlockEntityTicker<T> getTicker(World w, BlockState s, BlockEntityType<T> t){
         return w.isClient ? null : (wr, p, st, be) -> { if (be instanceof CombustionEngineEntity e) e.serverTick();
-@Override
+
+    @Override
 public ActionResult onUse(BlockState s, net.minecraft.world.World w, BlockPos p, PlayerEntity pl, Hand h, BlockHitResult hit){ if(!w.isClient){ var be=w.getBlockEntity(p); if(be instanceof net.mod.buildcraft.fabric.block.entity.CombustionEngineEntity) pl.openHandledScreen((net.minecraft.screen.NamedScreenHandlerFactory)be);} return ActionResult.SUCCESS; }
 }
 ;
@@ -47,4 +49,4 @@ public net.minecraft.util.ActionResult onUse(net.minecraft.block.BlockState stat
             return net.minecraft.util.ActionResult.SUCCESS;
         }
         return super.onUse(state, world, pos, player, hand, hit);
-    }
+     

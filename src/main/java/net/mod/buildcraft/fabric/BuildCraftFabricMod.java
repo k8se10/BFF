@@ -9,6 +9,7 @@ public class BuildCraftFabricMod implements ModInitializer {
     public static final String MODID = "buildcraft";
     public static final Logger LOGGER = LoggerFactory.getLogger("BuildCraft (Fabric)");
 
+    
     @Override
     public void onInitialize() {
         LOGGER.info("Starting BuildCraft (Fabric) scaffold...");
