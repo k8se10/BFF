@@ -1,59 +1,53 @@
-name: Build (Fabric 1.20.4)
+name: CI
 
 on:
   push:
-    branches: [ main, master ]
-    paths-ignore:
-      - '**/*.md'
-      - '**/*.png'
-      - '**/*.jpg'
-      - '**/*.gif'
+    branches: ["**"]
   pull_request:
-    branches: [ main, master ]
   workflow_dispatch:
-
-concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: true
 
 jobs:
   build:
     runs-on: ubuntu-latest
+    timeout-minutes: 40
     permissions:
-      contents: read
+      contents: write
 
     steps:
       - name: Checkout
-      - uses: actions/checkout@v4
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
-      # Wrapper validation often trips repos that re-bootstrap the wrapper;
-      # keep it but don't fail the whole build if it complains.
-      - name: Validate Gradle Wrapper
-        uses: gradle/wrapper-validation-action@v2
-        continue-on-error: true
-
-      - name: Set up Temurin JDK 17
+      - name: Set up Java 17
         uses: actions/setup-java@v4
         with:
           distribution: temurin
           java-version: '17'
+          cache: 'gradle'
 
-      - name: Setup Gradle
-        uses: gradle/actions/setup-gradle@v3
+      - name: Install Gradle 8.7 (no wrapper)
+        shell: bash
+        run: |
+          set -euo pipefail
+          curl -L -o gradle.zip https://services.gradle.org/distributions/gradle-8.7-bin.zip
+          unzip -q gradle.zip
+          echo "$PWD/gradle-8.7/bin" >> "$GITHUB_PATH"
+          gradle --version
 
-      - name: Make gradlew executable (just in case)
-        run: chmod +x gradlew
+      - name: Build (clean + remap)
+        env:
+          GRADLE_OPTS: -Dhttps.protocols=TLSv1.2,TLSv1.3
+        run: |
+          set -euo pipefail
+          gradle --stacktrace --no-daemon --refresh-dependencies clean build remapJar
+          echo "Artifacts in build/libs:"
+          ls -alh build/libs || true
 
-      - name: Build (assemble + remap)
-        run: ./gradlew clean build remapJar --stacktrace --no-daemon
-
-      - name: Upload mod JARs
+      - name: Upload jars
+        if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: buildcraft-fabric-jars
+          name: mod-jars
           path: |
             build/libs/*.jar
-            !build/libs/*-sources.jar
-            !build/libs/*-dev.jar
-            !build/libs/*-javadoc.jar
-          if-no-files-found: error
