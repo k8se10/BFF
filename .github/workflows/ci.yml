@@ -47,14 +47,7 @@ jobs:
       - name: Clear DEFAULT_JVM_OPTS in wrapper
         shell: bash
         run: |
-          python3 - <<'PY'
-from pathlib import Path
-import re
-p = Path('gradlew')
-s = p.read_text(encoding='utf-8')
-s = re.sub(r'^DEFAULT_JVM_OPTS=.*$', 'DEFAULT_JVM_OPTS=""', s, flags=re.M)
-p.write_text(s, encoding='utf-8')
-PY
+          python3 -c "import re, pathlib; p=pathlib.Path('gradlew'); s=p.read_text(encoding='utf-8'); s=re.sub(r'^DEFAULT_JVM_OPTS=.*$', 'DEFAULT_JVM_OPTS=\"\"', s, flags=re.M); p.write_text(s, encoding='utf-8')"
           chmod +x gradlew
 
       - name: Print tool versions
@@ -74,9 +67,8 @@ PY
           set -euo pipefail
           mkdir -p build/ci
           ./gradlew clean build -S --stacktrace --no-daemon | tee build/ci/build.log
-          # If no non-dev/non-sources jars were produced, try remapJar explicitly
           if ! find . -type f -path "*/build/libs/*.jar" | grep -vqE '(-dev|-sources)\.jar$'; then
-            echo "No release jar found after 'build'; running 'remapJar'..."
+            echo "No release jar after 'build'; running 'remapJar'..."
             ./gradlew remapJar -S --stacktrace --no-daemon | tee -a build/ci/build.log
           fi
 
@@ -108,4 +100,16 @@ PY
           path: ${{ steps.jar.outputs.jar }}
           if-no-files-found: error
 
-      - name
+      - name: Upload diagnostics (logs, metadata)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: diagnostics
+          path: |
+            build/ci/**
+            **/build/reports/**
+            **/build/libs/*.jar
+            gradle.properties
+            settings.gradle
+            build.gradle
+            gradle/wrapper/gradle-wrapper.properties
