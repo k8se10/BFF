@@ -1,4 +1,4 @@
-# BuildCraft: Fabric 1.20.4
+# BuildCraft: Fabric 1.20.4 (PROJECT ON HOLD) 
 
 An advanced, modernized port of BuildCraft for Fabric, fully faithful to the original mod — quarries, pipes, gates, engines, oil, MJ power, builder/blueprints, and more.
 
