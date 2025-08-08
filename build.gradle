@@ -17,6 +17,9 @@ java {
     targetCompatibility = JavaVersion.VERSION_17
     withSourcesJar()
 }
+tasks.named("build") {
+    dependsOn("remapJar")
+}
 
 repositories {
     mavenCentral()
