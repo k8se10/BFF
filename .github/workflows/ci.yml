@@ -7,22 +7,48 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+
     steps:
       - uses: actions/checkout@v4
 
-      - name: Set up JDK 17
+      - name: Set up JDK 17 (Temurin)
         uses: actions/setup-java@v4
         with:
           distribution: temurin
           java-version: 17
 
-      - name: Grant execute permission for gradlew
-        run: chmod +x gradlew
+      # If gradlew was ever committed with CRLF, normalize WITHOUT sed
+      - name: Normalize gradlew line endings
+        shell: bash
+        run: |
+          awk 'sub("\r$","")' gradlew > gradlew.nix && mv gradlew.nix gradlew
+          chmod +x gradlew
+
+      # Some earlier steps (or a bad patch) can corrupt DEFAULT_JVM_OPTS.
+      # Force it to empty using Python (no sed), then chmod again.
+      - name: Strip wrapper DEFAULT_JVM_OPTS
+        shell: bash
+        run: |
+          python3 - << 'PY'
+import re, pathlib
+p = pathlib.Path("gradlew")
+s = p.read_text(encoding="utf-8")
+s = re.sub(r'^DEFAULT_JVM_OPTS=.*$', 'DEFAULT_JVM_OPTS=""', s, flags=re.M)
+p.write_text(s, encoding="utf-8")
+PY
+          chmod +x gradlew
+
+      # Make sure no weird JAVA_* options or sed-aliases leak into the env
+      - name: Clean JVM env + set Gradle opts
+        shell: bash
+        run: |
+          echo 'JAVA_TOOL_OPTIONS=' >> $GITHUB_ENV
+          echo 'JAVA_OPTS=' >> $GITHUB_ENV
+          echo 'GRADLE_OPTS=-Djava.net.preferIPv4Stack=true -Dhttps.protocols=TLSv1.2,TLSv1.3' >> $GITHUB_ENV
 
       - name: Build (refresh deps)
+        shell: bash
         run: ./gradlew --refresh-dependencies build -S --stacktrace --no-daemon
-        env:
-          GRADLE_OPTS: "-Djava.net.preferIPv4Stack=true -Dhttps.protocols=TLSv1.2,TLSv1.3"
 
       - name: Publish build artifacts
         if: always()
