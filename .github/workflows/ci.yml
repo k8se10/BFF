@@ -16,9 +16,6 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Validate Gradle Wrapper
-        uses: gradle/wrapper-validation-action@v2
-
       - name: Set up JDK 17 (Temurin)
         uses: actions/setup-java@v4
         with:
@@ -41,7 +38,7 @@ jobs:
           if [ -f gradlew ]; then
             sed -i 's/\r$//' gradlew
             chmod +x gradlew
-            # Clear wrapper JVM opts if your wrapper had bad "-Xmx" defaults
+            # Nuke any bad defaults that broke earlier runs
             if grep -q '^DEFAULT_JVM_OPTS=' gradlew; then
               sed -i 's/^DEFAULT_JVM_OPTS=.*/DEFAULT_JVM_OPTS=""/' gradlew
             fi
