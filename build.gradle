@@ -1,90 +1,71 @@
 plugins {
-  id 'fabric-loom' version '1.6.12'
+  id 'fabric-loom' version '1.6.+'
   id 'maven-publish'
 }
 
-group = project.group
-version = project.mod_version
-
-base {
-  archivesName = project.archives_base_name
-}
-
-repositories {
-  mavenCentral()
-  maven { url = 'https://maven.fabricmc.net/' }
-  maven { url = 'https://maven.terraformersmc.com/releases/' }
-  maven { url = 'https://maven.quiltmc.org/repository/release/' }
-  maven { url = 'https://repo.spongepowered.org/repository/maven-public/' }
-}
-
-dependencies {
-  // MC + mappings + loader
-  minecraft "com.mojang:minecraft:${minecraft_version}"
-  mappings "net.fabricmc:yarn:${yarn_mappings}:v2"
-  modImplementation "net.fabricmc:fabric-loader:${loader_version}"
-
-  // Fabric API (umbrella)
-  modImplementation "net.fabricmc.fabric-api:fabric-api:${fabric_api_version}"
-}
-
-loom {
-  splitEnvironmentSourceSets()
-
-  runs {
-    client {
-      client()
-      ideConfigGenerated(true)
-      runDir("run/client")
-    }
-    server {
-      server()
-      ideConfigGenerated(true)
-      runDir("run/server")
-    }
-  }
-}
+group = project.findProperty('group') ?: 'net.mod.buildcraft'
+version = project.findProperty('version') ?: '0.1.0'
 
 java {
   toolchain {
-    languageVersion = JavaLanguageVersion.of(project.java_version as int)
+    languageVersion = JavaLanguageVersion.of(project.findProperty('java_version') ?: '17')
   }
   withSourcesJar()
 }
 
+repositories {
+  // PREFER_PROJECT in settings makes these win over global settings
+  maven { url = 'https://maven.fabricmc.net/' }
+  mavenCentral()
+  maven { url = 'https://maven.quiltmc.org/repository/release/' }
+  maven { url = 'https://maven.terraformersmc.com/releases/' }
+  maven { url = 'https://repo.spongepowered.org/repository/maven-public/' }
+}
+
+dependencies {
+  minecraft "com.mojang:minecraft:${minecraft_version}"
+  mappings "net.fabricmc:yarn:${yarn_mappings}:v2"
+
+  modImplementation "net.fabricmc:fabric-loader:${loader_version}"
+  modImplementation "net.fabricmc.fabric-api:fabric-api:${fabric_api_version}"
+
+  // If you use annotations:
+  compileOnly annotationProcessor("com.google.code.findbugs:jsr305:3.0.2")
+}
+
 tasks.withType(JavaCompile).configureEach {
-  options.release = project.java_version as int
-  options.encoding = "UTF-8"
+  options.encoding = 'UTF-8'
+  options.release = 17
+}
+
+loom {
+  // add loom config here if you use access wideners, split env sources, etc.
+  // e.g.: accessWidenerPath = file("src/main/resources/yourmod.accesswidener")
 }
 
 jar {
-  from("LICENSE") {
-    rename { "${it}_${project.archives_base_name}" }
+  from("LICENSE") { rename { "${it}_${project.name}" } }
+  manifest {
+    attributes(
+      'Implementation-Title': project.name,
+      'Implementation-Version': project.version,
+      'Built-By': 'CI'
+    )
   }
-}
-
-// Make the standard build produce a remapped jar too (what you ship)
-tasks.register("ciJar") {
-  dependsOn("build", "remapJar")
 }
 
 publishing {
   publications {
     mavenJava(MavenPublication) {
       from components.java
-      artifact(remapJar) {
-        builtBy remapJar
-      }
+      artifact(remapJar) // loom adds remapJar
       artifact(sourcesJar)
       groupId = project.group
-      artifactId = project.archives_base_name
+      artifactId = (project.findProperty('archivesBaseName') ?: 'buildcraft-fabric')
       version = project.version
     }
   }
   repositories {
-    maven {
-      name = "localBuild"
-      url = uri("${layout.buildDirectory.dir('repo')}")
-    }
+    // add your repo target if you publish
   }
 }
