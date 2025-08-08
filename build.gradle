@@ -1,56 +1,88 @@
 plugins {
+    id 'java'
     id 'fabric-loom' version '1.6.12'
     id 'maven-publish'
 }
 
-group = 'net.mod.buildcraft'
-version = '0.1.0+1.20.4'
-archivesBaseName = 'buildcraft-fabric'
+group = project.findProperty('maven_group') ?: 'net.mod.buildcraft'
+version = project.findProperty('mod_version') ?: '1.0.0'
 
 java {
-    toolchain { languageVersion = JavaLanguageVersion.of(17) }
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(17)
+    }
     withSourcesJar()
 }
 
+base {
+    archivesName.set(project.findProperty('archives_name') ?: 'buildcraft-fabric')
+}
+
 repositories {
+    // Order matters; keep Central first
     mavenCentral()
     maven { url = 'https://maven.fabricmc.net/' }
     maven { url = 'https://maven.terraformersmc.com/releases/' }
-    maven { url = 'https://repo.spongepowered.org/repository/maven-public/' } // optional
+    maven { url = 'https://maven.quiltmc.org/repository/release/' }
+    maven { url = 'https://repo.spongepowered.org/repository/maven-public/' }
+    maven { url = 'https://maven.ladysnake.org/releases' }
 }
 
+def MC_VERSION     = project.findProperty('minecraft_version') ?: '1.20.4'
+def YARN_MAPPINGS  = project.findProperty('yarn_mappings')     ?: '1.20.4+build.3'
+def LOADER_VERSION = project.findProperty('loader_version')    ?: '0.15.7'
+def FABRIC_API     = project.findProperty('fabric_api_version')?: '0.97.5+1.20.4'
+def MIXIN_EXTRAS   = project.findProperty('mixin_extras_version') ?: '0.3.2' // remove if unused
+
 dependencies {
-    minecraft "com.mojang:minecraft:1.20.4"
+    minecraft "com.mojang:minecraft:${MC_VERSION}"
+    mappings  "net.fabricmc:yarn:${YARN_MAPPINGS}:v2"
 
-    // Keep it simple: use Yarn directly (layered mappings optional, not required)
-    mappings "net.fabricmc:yarn:1.20.4+build.3:v2"
+    modImplementation "net.fabricmc:fabric-loader:${LOADER_VERSION}"
+    modImplementation "net.fabricmc.fabric-api:fabric-api:${FABRIC_API}"
 
-    modImplementation "net.fabricmc:fabric-loader:0.15.10"
-    modImplementation "net.fabricmc.fabric-api:fabric-api:0.97.0+1.20.4"
-
-    // MixinExtras
-    modImplementation "io.github.llamalad7:mixinextras-fabric:0.3.2"
-    annotationProcessor "io.github.llamalad7:mixinextras-common:0.3.2"
+    // Optional (delete if you don't use it)
+    modImplementation "io.github.llamalad7:mixinextras-fabric:${MIXIN_EXTRAS}"
+    include          "io.github.llamalad7:mixinextras-fabric:${MIXIN_EXTRAS}"
 }
 
 loom {
-    silentMojangMappingsLicense()
-    mixin {
-        defaultRefmapName = "buildcraft-fabric.refmap.json"
+    // put loom config here if needed (e.g. accessWidenerPath)
+    // accessWidenerPath = file("src/main/resources/yourmodid.accesswidener")
+}
+
+processResources {
+    inputs.property "version", project.version
+    filesMatching(['fabric.mod.json', 'quilt.mod.json']) {
+        expand "version": project.version
     }
 }
 
 tasks.withType(JavaCompile).configureEach {
     options.release = 17
+    options.encoding = 'UTF-8'
 }
 
 jar {
-    from("LICENSE") {
-        rename { "LICENSE_${archivesBaseName}" }
-    }
+    // manifest { attributes 'Implementation-Title': base.archivesName.get(), 'Implementation-Version': project.version }
 }
 
-// Make 'build' produce a remapped mod jar in CI
-tasks.named("build") {
-    dependsOn("remapJar")
+// ensure a game-ready jar exists after build
+tasks.named('build') {
+    dependsOn tasks.named('remapJar')
+}
+
+publishing {
+    publications {
+        create('mavenJava', MavenPublication) {
+            from components.java
+            groupId = project.group
+            artifactId = base.archivesName.get()
+            version = project.version
+        }
+    }
+    repositories {
+        // mavenLocal()
+        // maven { url = uri("file://${project.rootDir}/repo") }
+    }
 }
